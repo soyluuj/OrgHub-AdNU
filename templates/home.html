@@ -1,0 +1,166 @@
+{% extends "base.html" %}
+
+{% block title %}AdnuBid{% endblock %}
+
+{% block css %}
+<link rel="stylesheet"
+      href="{{ url_for('static', filename='css/home.css') }}">
+{% endblock %}
+
+{% block content %}
+
+<section class="hero">
+
+    <h1>AdnuBid Marketplace</h1>
+
+    <p>
+        Buy, Sell and Bid on items within your campus community.
+    </p>
+
+</section>
+
+<section class="ending-soon">
+
+    <h2> Auctions Ending Soon</h2>
+
+    <div class="listing-grid">
+
+        {% if ending_soon %}
+
+            {% for item in ending_soon %}
+
+            <div class="listing-card">
+
+                {% if item.images %}
+
+                <img
+                    src="{{ url_for('static',
+                    filename=item.images[0].image_path) }}"
+                    alt="{{ item.title }}">
+
+                {% else %}
+
+                <img
+                    src="{{ url_for('static',
+                    filename='images/no-image.png') }}"
+                    alt="No Image">
+
+                {% endif %}
+
+                <div class="listing-info">
+
+                    <h3>{{ item.title }}</h3>
+
+                    <p class="price">
+
+                        ₱{{ "%.2f"|format(item.starting_price) }}
+
+                    </p>
+
+                    <p>
+
+                        Ends:
+
+                        {{ item.auction_end.strftime("%b %d, %I:%M %p") }}
+
+                    </p>
+
+                    <a
+                        class="view-btn"
+                        href="{{ url_for('auction.auction_detail',
+                        item_id=item.item_id) }}">
+
+                        View Auction
+
+                    </a>
+
+                </div>
+
+            </div>
+
+            {% endfor %}
+
+        {% else %}
+
+            <p>No auctions ending soon.</p>
+
+        {% endif %}
+
+    </div>
+
+</section>
+
+<section class="listings">
+
+    <h2>Latest Auctions</h2>
+
+    <div class="listing-grid">
+
+        {% if items %}
+
+            {% for item in items %}
+
+            <div class="listing-card">
+
+                {% if item.images %}
+
+                <img
+                    src="{{ url_for('static', filename=item.images[0].image_path) }}"
+                    alt="{{ item.title }}">
+
+                {% else %}
+
+                <img
+                    src="{{ url_for('static', filename='images/no-image.png') }}"
+                    alt="No Image">
+
+                {% endif %}
+
+                <div class="listing-info">
+
+                    <h3>{{ item.title }}</h3>
+
+                    <p class="price">
+                        ₱{{ "%.2f"|format(item.starting_price) }}
+                    </p>
+
+                    <p>
+                        <strong>Seller:</strong>
+                        {{ item.seller.full_name }}
+                    </p>
+
+                    <p>
+                        <strong>Category:</strong>
+                        {{ item.category.category_name }}
+                    </p>
+
+                    <p>
+                        <strong>Ends:</strong>
+                        {{ item.auction_end.strftime("%B %d, %Y %I:%M %p") }}
+                    </p>
+
+                    <a
+                        href="{{ url_for('auction.auction_detail', item_id=item.item_id) }}"
+                        class="view-btn ">
+                        
+                        View Auction
+
+                </a>
+
+                </div>
+
+            </div>
+
+            {% endfor %}
+
+        {% else %}
+
+            <p>No auctions available yet.</p>
+
+        {% endif %}
+
+    </div>
+
+</section>
+
+{% endblock %}

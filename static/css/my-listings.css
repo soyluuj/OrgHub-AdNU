@@ -1,0 +1,292 @@
+.page-header{
+
+    width:90%;
+    margin:40px auto 20px;
+
+}
+
+.page-header h1{
+
+    font-size:34px;
+    margin-bottom:8px;
+
+}
+
+.page-header p{
+
+    color:#666;
+
+}
+
+.listing-grid{
+
+    width:90%;
+    margin:30px auto;
+    display:grid;
+    grid-template-columns:repeat(auto-fill,minmax(300px,1fr));
+    gap:24px;
+
+}
+
+.listing-card{
+
+    position:relative;
+    background:#fff;
+    border-radius:16px;
+    overflow:visible;
+    box-shadow:0 6px 18px rgba(0,0,0,.08);
+
+}
+
+
+
+.listing-card:hover{
+
+    transform:translateY(-6px);
+
+}
+
+.listing-card:hover{
+
+    transform:translateY(-5px);
+
+}
+
+.listing-card img{
+    width:100%;
+    height:220px;
+    object-fit:cover;
+ 
+
+}
+
+.listing-info{
+
+    padding:28px;
+
+}
+
+.listing-info h2{
+
+    margin-bottom:12px;
+    font-size:24px;
+
+}
+
+.listing-info p{
+
+    margin:8px 0;
+    color:#555;
+
+}
+
+.status{
+
+    display:inline-block;
+
+    padding:6px 12px;
+
+    border-radius:30px;
+
+    font-size:14px;
+    font-weight:600;
+
+    color:white;
+
+}
+
+.status.active{
+
+    background:#2563eb;
+
+}
+
+.status.sold{
+
+    background:#22c55e;
+
+}
+
+.status.cancelled{
+
+    background:#ef4444;
+
+}
+
+.view-btn{
+
+    display:inline-block;
+
+    margin-top:18px;
+
+    text-decoration:none;
+
+    background:#2563eb;
+    color:white;
+
+    padding:12px 22px;
+
+    border-radius:10px;
+
+    transition:.3s;
+
+}
+
+.view-btn:hover{
+
+    background:#1d4ed8;
+
+}
+
+.empty-state{
+
+    width:90%;
+    margin:80px auto;
+
+    text-align:center;
+
+    color:#666;
+
+}
+
+.listing-actions{
+
+    position:absolute;
+    top:12px;
+    right:12px;
+    z-index:20;
+
+}
+
+.action-btn{
+
+    width:40px;
+    height:40px;
+
+    display:flex;
+    justify-content:center;
+    align-items:center;
+
+    border:none;
+
+    border-radius:50%;
+
+    background:rgba(255,255,255,.95);
+
+    cursor:pointer;
+
+    transition:
+        background .2s,
+        transform .15s;
+
+    box-shadow:0 3px 12px rgba(0,0,0,.15);
+
+}
+
+.action-btn:hover{
+
+    background:#f3f4f6;
+
+    transform:scale(1.08);
+
+}
+
+.action-btn:active{
+
+    transform:scale(.95);
+
+}
+
+
+.action-menu{
+
+    position:absolute;
+    right:0;
+    top:46px;
+
+    width:170px;
+
+    background:#fff;
+
+    border-radius:12px;
+
+    overflow:hidden;
+
+    box-shadow:0 10px 30px rgba(0,0,0,.15);
+
+    opacity:0;
+    visibility:hidden;
+
+    transform:translateY(-8px) scale(.96);
+
+    transition:
+        opacity .18s ease,
+        transform .18s ease,
+        visibility .18s;
+
+}
+
+.action-menu.show{
+
+    opacity:1;
+    visibility:visible;
+    transform:translateY(0) scale(1);
+
+}
+
+
+.action-menu a,
+.action-menu button{
+
+    display:flex;
+    align-items:center;
+    gap:10px;
+    width:100%;
+    padding:13px 16px;
+    border:none;
+    background:none;
+    cursor:pointer;
+    text-decoration:none;
+    color:#374151;
+    font-size:15px;
+    transition:.2s;
+
+}
+
+.action-menu a:hover,
+.action-menu button:hover{
+
+    background:#eff6ff;
+    color:#2563eb;
+
+}
+
+.action-menu button{
+
+    color:#dc2626;
+
+}
+
+.action-menu button:hover{
+
+    background:#fef2f2;
+
+    color:#b91c1c;
+
+}
+
+.action-menu form{
+
+    margin:0;
+
+}
+
+.action-menu hr{
+
+    margin:0;
+
+    border:none;
+
+    border-top:1px solid #eee;
+
+}

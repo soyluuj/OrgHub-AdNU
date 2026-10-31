@@ -1,0 +1,240 @@
+.login-page{
+    min-height:calc(100vh - 80px);
+    display:flex;
+    justify-content:center;
+    align-items:center;
+    padding:40px 20px;
+    background:#f4f7fb;
+}
+
+.login-container{
+
+    width:1100px;
+
+    background:white;
+
+    border-radius:18px;
+
+    overflow:hidden;
+
+    display:grid;
+
+    grid-template-columns:1fr 1fr;
+
+    box-shadow:0 20px 40px rgba(0,0,0,.08);
+
+}
+
+.login-left{
+
+    background:#2563EB;
+
+    color:white;
+
+    padding:60px;
+
+    display:flex;
+
+    flex-direction:column;
+
+    justify-content:center;
+
+}
+
+.login-left h1{
+
+    font-size:42px;
+
+    margin-bottom:20px;
+
+}
+
+.login-left p{
+
+    line-height:1.8;
+
+    opacity:.95;
+
+}
+
+.login-left img{
+
+    width:100%;
+
+    margin-top:50px;
+
+}
+
+.login-right{
+
+    padding:60px;
+
+    display:flex;
+
+    align-items:center;
+
+}
+
+.login-right form{
+
+    width:100%;
+
+}
+
+.login-right h2{
+
+    font-size:34px;
+
+    margin-bottom:35px;
+
+}
+
+.input-group{
+
+    position:relative;
+
+    margin-bottom:20px;
+
+}
+
+.input-group input{
+
+    width:100%;
+
+    padding:16px 50px;
+
+    border:1px solid #ddd;
+
+    border-radius:10px;
+
+    font-size:16px;
+
+    outline:none;
+
+    transition:.3s;
+
+}
+
+.input-group input:focus{
+
+    border-color:#2563EB;
+
+}
+
+.input-group i:first-child{
+
+    position:absolute;
+
+    left:18px;
+
+    top:50%;
+
+    transform:translateY(-50%);
+
+    color:#777;
+
+}
+
+#togglePassword{
+
+    position:absolute;
+
+    right:18px;
+
+    top:50%;
+
+    transform:translateY(-50%);
+
+    cursor:pointer;
+
+    color:#777;
+
+}
+
+.options{
+
+    display:flex;
+
+    justify-content:space-between;
+
+    margin-bottom:25px;
+
+    font-size:14px;
+
+}
+
+.options a{
+
+    color:#2563EB;
+
+    text-decoration:none;
+
+}
+
+.submit-bar button{
+
+    width:100%;
+
+    padding:15px;
+
+    border:none;
+
+    border-radius:10px;
+
+    background:#2563EB;
+
+    color:white;
+
+    font-size:17px;
+
+    cursor:pointer;
+
+    transition:.3s;
+
+}
+
+button:hover{
+
+    background:#1d4ed8;
+
+}
+
+.register-link{
+
+    margin-top:25px;
+
+    text-align:center;
+
+}
+
+.register-link a{
+
+    color:#2563EB;
+
+    text-decoration:none;
+
+    font-weight:600;
+
+}
+
+@media(max-width:900px){
+
+.login-container{
+
+grid-template-columns:1fr;
+
+}
+
+.login-left{
+
+display:none;
+
+}
+
+.login-right{
+
+padding:40px;
+
+}
+
+}

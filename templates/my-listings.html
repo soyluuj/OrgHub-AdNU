@@ -1,0 +1,148 @@
+{% extends "base.html" %}
+
+{% block title %}
+My Listings
+{% endblock %}
+
+{% block css %}
+<link rel="stylesheet"
+href="{{ url_for('static', filename='css/my-listings.css') }}">
+{% endblock %}
+
+{% block content %}
+
+<div class="page-header">
+
+    <h1>My Listings</h1>
+
+    <p>
+        Manage all of the auctions you've created.
+    </p>
+
+</div>
+
+{% if items %}
+
+<div class="listing-grid">
+
+{% for item in items %}
+
+
+<div class="listing-card">
+
+    <div class="listing-actions">
+
+        <button class="action-btn"> 
+            <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-three-dots-vertical" viewBox="0 0 16 16">
+            <path d="M9.5 13a1.5 1.5 0 1 1-3 0 1.5 1.5 0 0 1 3 0m0-5a1.5 1.5 0 1 1-3 0 1.5 1.5 0 0 1 3 0m0-5a1.5 1.5 0 1 1-3 0 1.5 1.5 0 0 1 3 0"/>
+            </svg> </button>
+
+        <div class="action-menu">
+
+             <a href="{{ url_for('auction.edit_listing',
+                    item_id=item.item_id) }}">
+                Edit
+            </a>
+
+           
+            <form
+                action="{{ url_for('auction.delete_listing',
+                item_id=item.item_id) }}"
+                method="POST"
+
+                onsubmit="return confirm(
+                    'Delete this listing permanently?'
+            );">
+
+                <button type="submit">
+
+                    Delete
+
+                </button>
+
+            </form>
+
+           
+
+        </div>
+
+    </div>
+
+    {% if item.images %}
+
+    <img
+        src="{{ url_for('static', filename=item.images[0].image_path) }}"
+        alt="{{ item.title }}">
+
+    {% else %}
+
+    <img
+        src="{{ url_for('static', filename='images/no-image.png') }}">
+
+    {% endif %}
+
+    <div class="listing-info">
+
+        <h2>{{ item.title }}</h2>
+
+        <p>
+
+            <strong>Status:</strong>
+
+            {{ item.status.replace("_"," ").title() }}
+
+        </p>
+
+        <p>
+
+            <strong>Highest Bid:</strong>
+
+            ₱{{ "%.2f"|format(item.bids[0].bid_amount if item.bids else item.starting_price) }}
+
+        </p>
+
+        <p>
+
+            <strong>Total Bids:</strong>
+
+            {{ item.bids|length }}
+
+        </p>
+
+        <a
+            class="view-btn"
+            href="{{ url_for('auction.auction_detail',
+            item_id=item.item_id) }}">
+
+            View Auction
+
+        </a>
+
+    </div>
+
+</div>
+
+{% endfor %}
+
+</div>
+
+{% else %}
+
+<div class="empty-state">
+
+    <h2>No Listings Yet</h2>
+
+    <p>Create your first auction.</p>
+
+</div>
+
+{% endif %}
+
+{% endblock %}
+
+{% block scripts %}
+
+<script src="{{ url_for('static',
+filename='js/my-listings.js') }}"></script>
+
+{% endblock %}

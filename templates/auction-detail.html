@@ -1,0 +1,297 @@
+{% extends "base.html" %}
+
+{% block title %}
+{{ item.title }} | AdnuBid
+{% endblock %}
+
+{% block css %}
+
+
+<link
+    rel="stylesheet"
+    href="{{ url_for('static', filename='css/auction-detail.css') }}">
+{% endblock %}
+
+{% block content %}
+
+<section class="auction-page">
+
+    <div class="auction-container">
+
+
+    <div class="gallery">
+
+    {% if item.images %}
+
+        <img
+            id="mainImage"
+            class="main-image"
+            src="{{ url_for('static', filename=item.images[0].image_path) }}"
+            alt="{{ item.title }}">
+
+    {% if item.images|length > 1 %}
+
+        <div class="thumbnail-row">
+
+    {% for image in item.images %}
+
+            <img
+                class="thumbnail {% if loop.first %}active{% endif %}"
+                src="{{ url_for('static', filename=image.image_path) }}"
+                alt="Thumbnail">
+
+    {% endfor %}
+
+    </div>
+
+        {% endif %}
+
+        {% else %}
+
+        <img
+            class="main-image"
+            src="{{ url_for('static', filename='images/no-image.png') }}"
+            alt="No Image">
+
+        {% endif %}
+
+    </div>
+
+        <div class="auction-info">
+
+            <h1>{{ item.title }}</h1>
+
+            
+            <h2>
+                <p>
+
+                    <strong>Status: </strong><br>
+
+                    {{ item.status.replace("_", " ").title() }}
+
+                </p>
+                {% if bids %}
+
+                    ₱{{ "%.2f"|format(bids[0].bid_amount) }}
+                
+                {% else %}
+                
+
+                    ₱{{ "%.2f"|format(item.starting_price) }}
+
+                {% endif %}
+                
+
+            </h2>
+            
+            <div class="info-card">
+
+                <p>
+
+                    <strong>Seller</strong><br>
+
+                    {{ item.seller.full_name }}
+
+                </p>
+
+                <p>
+
+                    <strong>Category</strong><br>
+
+                    {{ item.category.category_name }}
+
+                </p>
+
+                <p>
+
+                    <strong>Condition</strong><br>
+
+                    {{ item.item_condition.replace("_"," ").title() }}
+
+                </p>
+
+                <p>
+
+                    <strong>Auction Ends in: </strong><br>
+
+                    <span
+                        id="countdown"
+                        data-end="{{ item.auction_end.isoformat() }}">
+
+                            Loading...
+
+                    </span>
+
+                </p>
+
+            </div>
+
+            {% if session.get("user_id") == item.seller_id %}
+
+        <div class="seller-panel">
+
+            <h3>Your Listing</h3>
+
+                <p>
+
+                    You cannot bid on your own auction.
+
+                </p>
+
+            <hr>
+
+            <p>
+
+                <strong>Current Highest Bid</strong><br>
+
+                ₱{{ "%.2f"|format(
+                    bids[0].bid_amount if bids else item.starting_price
+                ) }}
+
+            </p>
+
+            <p>
+
+                <strong>Total Bids</strong><br>
+
+                {{ bids|length }}
+
+            </p>
+
+        </div>
+
+    {% else %}
+
+    <div class="bid-panel">
+
+        {% if item.auction_end > now %}
+
+            <h3>Place Your Bid</h3>
+
+            <p class="bid-note">
+
+                Enter an amount higher than the current bid.
+
+            </p>
+
+            <form
+                action="{{ url_for('auction.place_bid', item_id=item.item_id) }}"
+                method="POST">
+
+                <input
+                    type    ="number"
+                    class   ="bid-input"
+                    name    ="bid"
+                    step    ="0.01"
+                    required>
+
+            <button 
+                    class   ="bid-btn" 
+                    type    ="submit">
+
+                    Place Bid
+
+            </button>
+
+        </form>
+        
+        {% else %}
+
+            <div class="auction-ended">
+
+                    <h3>Auction Ended</h3>
+
+                    {% if bids %}
+
+                        <p><strong>Winning Bid</strong></p>
+
+                            <h2>
+                                ₱{{ "%.2f"|format(bids[0].bid_amount) }}
+                            </h2>
+
+                                <p>
+
+                                    Winner:
+                                    <strong>{{ bids[0].bidder.full_name }}</strong>
+
+                                </p>
+
+                    {% else %}
+
+                        <p>
+                            No bids were placed for this auction.
+                        </p>
+
+                    {% endif %}
+
+            </div>
+
+    {% endif %}
+
+    <div class="bid-history">
+
+        <h3>Bid History</h3>
+
+            {% if bids %}
+
+                {% for bid in bids %}
+
+                <div class="bid-card">
+
+                    <div>
+                            
+                        <strong>{{ bid.bidder.full_name }}</strong>
+
+                    </div>
+
+                    <div class="bid-price">
+
+                        ₱{{ "%.2f"|format(bid.bid_amount) }}
+
+                    </div>
+
+                    <small>
+
+                        {{ bid.bid_time.strftime("%B %d, %Y %I:%M %p") }}
+
+                    </small>
+
+                </div>
+
+                {% endfor %}
+
+            {% else %}
+
+                <p>No bids yet.</p>
+
+            {% endif %}
+
+        </div>
+
+    </div>
+
+    {% endif %}
+
+            </div>
+
+        </div>
+
+        <div class="description">
+
+            <h2>Description</h2>
+
+            <p>
+
+                {{ item.description }}
+
+            </p>
+
+        </div>
+        
+
+</section>
+
+{% endblock %}
+{% block scripts %}
+<script src="{{ url_for('static', filename='js/auction-detail.js') }}"></script>
+{% endblock %}

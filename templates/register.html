@@ -1,0 +1,128 @@
+{% extends "base.html" %}
+
+{% block title %}Register | AdnuBid{% endblock %}
+
+{% block css %}
+<link rel="stylesheet" href="{{ url_for('static', filename='css/register.css') }}">
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.7.2/css/all.min.css">
+{% endblock %}
+
+{% block content %}
+
+<section class="register-page">
+
+    <div class="register-container">
+
+        <!-- Left Side -->
+        <div class="register-left">
+
+            <div class="overlay"></div>
+
+            <div class="register-content">
+
+                <h1>Join AdnuBid</h1>
+
+                <p>
+                    Buy, sell, and bid on items within your campus community.
+                    Create your account and start exploring today.
+                </p>
+
+            </div>
+
+        </div>
+
+        <!-- Right Side -->
+        <div class="register-right">
+
+            <form action="{{ url_for('auth.register') }}" method="POST">
+
+                <h2>Create Account</h2>
+
+                <div class="input-group">
+                    <i class="fa-solid fa-user"></i>
+                    <input
+                        type="text"
+                        name="fullname"
+                        placeholder="Full Name"
+                        required>
+                </div>
+
+                <div class="input-group">
+                    <i class="fa-solid fa-envelope"></i>
+                    <input
+                        type="email"
+                        name="email"
+                        placeholder="School Email"
+                        required>
+                </div>
+
+                <div class="input-group">
+                    <i class="fa-solid fa-id-card"></i>
+                    <input
+                        type="text"
+                        name="id_number"
+                        placeholder="Student ID Number"
+                        required>
+
+                </div>
+
+                <div class="input-group">
+                    <i class="fa-solid fa-lock"></i>
+
+                    <input
+                        id="password"
+                        type="password"
+                        name="password"
+                        placeholder="Password"
+                        required>
+
+                    <i id="togglePassword"
+                       class="fa-solid fa-eye"></i>
+                </div>
+
+                <div class="input-group">
+                    <i class="fa-solid fa-lock"></i>
+
+                    <input
+                        id="confirmPassword"
+                        type="password"
+                        name="confirm_password"
+                        placeholder="Confirm Password"
+                        required>
+
+                    <i id="toggleConfirm"
+                       class="fa-solid fa-eye"></i>
+                </div>
+            
+            <div class="submit-bar">    
+                <button type="submit">
+
+                    Create Account
+
+                </button>
+            </div>
+                <p class="login-link">
+
+                    Already have an account?
+
+                    <a href="{{ url_for('auth.login') }}">
+
+                        Login
+
+                    </a>
+
+                </p>
+
+            </form>
+
+        </div>
+
+    </div>
+
+</section>
+
+{% endblock %}
+
+{% block scripts %}
+<script src="{{ url_for('static', filename='js/register.js') }}"></script>
+{% endblock %}
