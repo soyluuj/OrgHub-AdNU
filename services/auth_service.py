@@ -5,7 +5,7 @@ from models import User
 class AuthService:
 
     @staticmethod
-    def register(full_name, email, password, id_number):
+    def register(full_name, email, password, id_number, role="student"):
 
         # Check if email already exists
         existing = User.query.filter_by(email=email).first()
@@ -20,6 +20,7 @@ class AuthService:
             email=email,
             password=hashed_password,
             id_number=id_number,
+            role=role
         )
 
         db.session.add(user)

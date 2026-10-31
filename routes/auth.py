@@ -18,11 +18,13 @@ def register():
 
     if request.method == "POST":
 
+        # Inside the register route...
         success, message = AuthService.register(
             request.form["fullname"],
             request.form["email"],
             request.form["password"],
             request.form.get("id_number", ""),
+            request.form.get("role", "student") # <-- Pass the role!
         )
         # temp
         print ("REGISTER", success, message)
