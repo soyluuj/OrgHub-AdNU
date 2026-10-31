@@ -1,0 +1,9 @@
+{% extends "base.html" %}
+{% block title %}Dashboard{% endblock %}
+{% block content %}
+    <h1>Dashboard</h1>
+    <p>Welcome, {{ session["user_name"] }}!</p>
+    <h2>Managing: {{ org.name }}</h2>
+    <p>Category: {{ org.category }}</p>
+    <p>This is where you will add announcements and merch soon!</p>
+{% endblock %}
