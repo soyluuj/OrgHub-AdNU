@@ -11,7 +11,10 @@ def index():
     user = User.query.get(session["user_id"])
     if not user.organization:
         return redirect(url_for('dashboard.setup_org'))
-    return render_template("dashboard/index.html", org=user.organization)
+    
+    # Sort announcements newest first for the dashboard
+    announcements = sorted(user.organization.announcements, key=lambda x: x.created_at, reverse=True)
+    return render_template("dashboard/index.html", org=user.organization, announcements=announcements)
 
 @dashboard_bp.route("/setup", methods=["GET", "POST"])
 @org_admin_required
@@ -26,3 +29,49 @@ def setup_org():
         return redirect(url_for('dashboard.index'))
 
     return render_template("dashboard/setup.html")
+
+# --- NEW ROUTES BELOW ---
+
+@dashboard_bp.route("/settings", methods=["GET", "POST"])
+@org_admin_required
+def settings():
+    user = User.query.get(session["user_id"])
+    org = user.organization
+
+    if request.method == "POST":
+        OrgService.update_profile(
+            org, 
+            request.form, 
+            request.files.get("logo"), 
+            request.files.get("cover")
+        )
+        flash("Profile updated successfully!")
+        return redirect(url_for('dashboard.settings'))
+
+    return render_template("dashboard/settings.html", org=org)
+
+@dashboard_bp.route("/announcements/create", methods=["POST"])
+@org_admin_required
+def create_announcement():
+    user = User.query.get(session["user_id"])
+    title = request.form.get("title")
+    content = request.form.get("content")
+    
+    if title and content:
+        OrgService.create_announcement(user.organization.id, title, content)
+        flash("Announcement posted!")
+    else:
+        flash("Title and content are required.")
+        
+    return redirect(url_for('dashboard.index'))
+
+@dashboard_bp.route("/announcements/<int:announcement_id>/delete", methods=["POST"])
+@org_admin_required
+def delete_announcement(announcement_id):
+    user = User.query.get(session["user_id"])
+    if OrgService.delete_announcement(announcement_id, user.organization.id):
+        flash("Announcement deleted.")
+    else:
+        flash("Announcement not found.")
+        
+    return redirect(url_for('dashboard.index'))
