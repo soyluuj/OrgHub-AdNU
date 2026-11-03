@@ -1,0 +1,48 @@
+{% extends "base.html" %}
+{% block title %}{% if product %}Edit{% else %}Add{% endif %} Merch{% endblock %}
+
+{% block content %}
+<div style="max-width: 600px; margin: 0 auto; background: #fff; padding: 30px; border-radius: 8px; box-shadow: 0 4px 6px rgba(0,0,0,0.1);">
+    <h2>{% if product %}Edit Merch{% else %}Add New Merch{% endif %}</h2>
+    
+    <form method="POST" enctype="multipart/form-data">
+        <div style="margin-bottom: 15px;">
+            <label style="font-weight: 600;">Product Name</label>
+            <input type="text" name="name" value="{{ product.name if product else '' }}" required style="width: 100%; padding: 10px;">
+        </div>
+
+        <div style="margin-bottom: 15px;">
+            <label style="font-weight: 600;">Description</label>
+            <textarea name="description" rows="4" style="width: 100%; padding: 10px;">{{ product.description if product else '' }}</textarea>
+        </div>
+
+        <div style="display: flex; gap: 20px; margin-bottom: 15px;">
+            <div style="flex: 1;">
+                <label style="font-weight: 600;">Price (₱)</label>
+                <input type="number" step="0.01" name="price" value="{{ product.price if product else '' }}" required style="width: 100%; padding: 10px;">
+            </div>
+            <div style="flex: 1;">
+                <label style="font-weight: 600;">Stock</label>
+                <input type="number" name="stock" value="{{ product.stock if product else '' }}" required style="width: 100%; padding: 10px;">
+            </div>
+        </div>
+
+        <div style="margin-bottom: 20px;">
+            <label style="font-weight: 600;">Product Image</label>
+            {% if product and product.image_url %}
+                <div style="margin: 10px 0;">
+                    <img src="{{ url_for('static', filename=product.image_url) }}" style="width: 100px; height: 100px; object-fit: cover; border-radius: 4px;">
+                </div>
+            {% endif %}
+            <input type="file" name="image" accept="image/*" {% if not product %}required{% endif %}>
+        </div>
+
+        <div style="display: flex; gap: 10px;">
+            <button type="submit" style="background: #003366; color: white; padding: 12px 20px; border: none; border-radius: 4px; font-weight: 600; cursor: pointer; flex: 1;">
+                {% if product %}Save Changes{% else %}Add Merch{% endif %}
+            </button>
+            <a href="{{ url_for('dashboard.merch') }}" style="background: #eee; color: #333; padding: 12px 20px; text-decoration: none; border-radius: 4px; font-weight: 600; text-align: center; flex: 1;">Cancel</a>
+        </div>
+    </form>
+</div>
+{% endblock %}

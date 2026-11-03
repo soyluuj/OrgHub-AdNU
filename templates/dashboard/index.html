@@ -16,6 +16,18 @@
         <h1>{{ org.name }} Dashboard</h1>
     </div>
     <a href="{{ url_for('dashboard.settings') }}" class="btn">Edit Profile</a>
+    <div class="dash-header">
+    <div>
+        <h1>{{ org.name }} Dashboard</h1>
+        <p>Welcome back, {{ session["user_name"] }}</p>
+    </div>
+    <div>
+        <a href="{{ url_for('dashboard.merch') }}" class="btn" style="background: #28a745;">Manage Merch</a>
+        <a href="{{ url_for('dashboard.settings') }}" class="btn">Edit Profile</a>
+        <!-- Add a link to view the public page -->
+        <a href="{{ url_for('home.public_org_page', slug=org.slug) }}" target="_blank" class="btn" style="background: #6c757d;">View Public Page</a>
+    </div>
+</div>
 </div>
 
 <div class="dash-grid">

@@ -1,0 +1,45 @@
+{% extends "base.html" %}
+{% block title %}Merch Store | {{ org.name }}{% endblock %}
+
+{% block content %}
+<div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 20px;">
+    <h2>Manage Merch</h2>
+    <div>
+        <a href="{{ url_for('dashboard.add_merch') }}" class="btn" style="background: #003366; color: white; padding: 10px 15px; text-decoration: none; border-radius: 4px;">+ Add New Merch</a>
+        <a href="{{ url_for('dashboard.index') }}" class="btn" style="background: #6c757d; color: white; padding: 10px 15px; text-decoration: none; border-radius: 4px;">Back to Dashboard</a>
+    </div>
+</div>
+
+{% if products %}
+    <div style="display: grid; grid-template-columns: repeat(auto-fill, minmax(250px, 1fr)); gap: 20px;">
+        {% for product in products %}
+            <div style="border: 1px solid #ddd; border-radius: 8px; overflow: hidden; background: #fff;">
+                {% if product.image_url %}
+                    <img src="{{ url_for('static', filename=product.image_url) }}" style="width: 100%; height: 200px; object-fit: cover;">
+                {% else %}
+                    <div style="width: 100%; height: 200px; background: #eee; display: flex; align-items: center; justify-content: center;">No Image</div>
+                {% endif %}
+                
+                <div style="padding: 15px;">
+                    <h3 style="margin: 0 0 10px 0;">{{ product.name }}</h3>
+                    <p style="color: #28a745; font-weight: bold; margin: 0 0 10px 0;">₱{{ "%.2f"|format(product.price) }}</p>
+                    <p style="color: #666; font-size: 14px; margin: 0 0 15px 0;">Stock: {{ product.stock }}</p>
+                    
+                    <div style="display: flex; gap: 10px;">
+                        <a href="{{ url_for('dashboard.edit_merch', product_id=product.id) }}" style="background: #ffc107; color: #000; padding: 5px 10px; text-decoration: none; border-radius: 4px; font-size: 14px;">Edit</a>
+                        
+                        <form method="POST" action="{{ url_for('dashboard.delete_merch', product_id=product.id) }}" onsubmit="return confirm('Delete this merch?');" style="margin: 0;">
+                            <button type="submit" style="background: #dc3545; color: white; border: none; padding: 5px 10px; border-radius: 4px; cursor: pointer; font-size: 14px;">Delete</button>
+                        </form>
+                    </div>
+                </div>
+            </div>
+        {% endfor %}
+    </div>
+{% else %}
+    <div style="text-align: center; padding: 40px; background: #f9f9f9; border-radius: 8px;">
+        <h3>No merch yet</h3>
+        <p>Start adding items to your store!</p>
+    </div>
+{% endif %}
+{% endblock %}

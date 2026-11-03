@@ -1,7 +1,7 @@
 from flask import Blueprint, render_template, request, redirect, url_for, flash, session
 from utils.decorators import org_admin_required
 from services.org_service import OrgService
-from models import User
+from models import User, Product
 
 dashboard_bp = Blueprint("dashboard", __name__, url_prefix="/dashboard")
 
@@ -75,3 +75,53 @@ def delete_announcement(announcement_id):
         flash("Announcement not found.")
         
     return redirect(url_for('dashboard.index'))
+
+@dashboard_bp.route("/merch")
+@org_admin_required
+def merch():
+    user = User.query.get(session["user_id"])
+    products = user.organization.products
+    return render_template("dashboard/merch.html", org=user.organization, products=products)
+
+@dashboard_bp.route("/merch/add", methods=["GET", "POST"])
+@org_admin_required
+def add_merch():
+    user = User.query.get(session["user_id"])
+    
+    if request.method == "POST":
+        OrgService.create_product(
+            user.organization.id, 
+            request.form, 
+            request.files.get("image")
+        )
+        flash("Merch added successfully!")
+        return redirect(url_for('dashboard.merch'))
+        
+    return render_template("dashboard/merch_form.html", org=user.organization, product=None)
+
+@dashboard_bp.route("/merch/<int:product_id>/edit", methods=["GET", "POST"])
+@org_admin_required
+def edit_merch(product_id):
+    user = User.query.get(session["user_id"])
+    product = Product.query.filter_by(id=product_id, org_id=user.organization.id).first_or_404()
+    
+    if request.method == "POST":
+        success = OrgService.update_product(
+            product_id, 
+            user.organization.id, 
+            request.form, 
+            request.files.get("image")
+        )
+        if success:
+            flash("Merch updated successfully!")
+            return redirect(url_for('dashboard.merch'))
+            
+    return render_template("dashboard/merch_form.html", org=user.organization, product=product)
+
+@dashboard_bp.route("/merch/<int:product_id>/delete", methods=["POST"])
+@org_admin_required
+def delete_merch(product_id):
+    user = User.query.get(session["user_id"])
+    if OrgService.delete_product(product_id, user.organization.id):
+        flash("Merch deleted.")
+    return redirect(url_for('dashboard.merch'))
