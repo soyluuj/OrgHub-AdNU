@@ -1,0 +1,58 @@
+{% extends "base.html" %}
+{% block title %}My Orders | OrgHub{% endblock %}
+
+{% block content %}
+<div style="max-width: 800px; margin: 40px auto; padding: 0 20px;">
+    <h1 style="color: #003366; margin-bottom: 10px;">My Orders</h1>
+    <p style="color: #666; margin-bottom: 30px;">Track your merch purchases and pickup instructions here.</p>
+    
+    {% if orders %}
+        {% for order in orders %}
+            <div style="background: #fff; border: 1px solid #eee; padding: 25px; border-radius: 8px; margin-bottom: 20px; box-shadow: 0 2px 8px rgba(0,0,0,0.05);">
+                
+                <!-- Order Header -->
+                <div style="display: flex; justify-content: space-between; align-items: flex-start; border-bottom: 1px solid #eee; padding-bottom: 15px; margin-bottom: 15px;">
+                    <div>
+                        <h3 style="margin: 0 0 5px 0; color: #003366;">Order #{{ order.id }}</h3>
+                        <small style="color: #666;">From: <strong>{{ order.organization.name }}</strong></small><br>
+                        <small style="color: #888;">Placed on: {{ order.created_at.strftime('%b %d, %Y') }}</small>
+                    </div>
+                    
+                    <!-- Status Badge -->
+                    <span style="padding: 6px 14px; border-radius: 20px; font-weight: 700; font-size: 13px; text-transform: uppercase;
+                        {% if order.status == 'Pending' %}background: #fff3cd; color: #856404;
+                        {% elif order.status == 'Ready for Pickup' %}background: #d4edda; color: #155724;
+                        {% else %}background: #e2e3e5; color: #383d41;{% endif %}">
+                        {{ order.status }}
+                    </span>
+                </div>
+
+                <!-- Order Items -->
+                <div style="margin-bottom: 20px;">
+                    {% for item in order.items %}
+                        <div style="display: flex; justify-content: space-between; margin-bottom: 8px; font-size: 15px;">
+                            <span><strong>{{ item.quantity }}x</strong> {{ item.product.name }}</span>
+                            <span>₱{{ "%.2f"|format(item.price_at_time) }}</span>
+                        </div>
+                    {% endfor %}
+                </div>
+
+                <!-- Pickup Instructions -->
+                {% if order.status == 'Ready for Pickup' and order.pickup_instructions %}
+                    <div style="background: #e8f5e9; border-left: 4px solid #28a745; padding: 15px; border-radius: 4px;">
+                        <strong style="color: #155724; display: block; margin-bottom: 5px;">📦 Pickup Instructions from {{ order.organization.name }}:</strong>
+                        <p style="margin: 0; color: #155724; line-height: 1.5;">{{ order.pickup_instructions }}</p>
+                    </div>
+                {% endif %}
+                
+            </div>
+        {% endfor %}
+    {% else %}
+        <div style="text-align: center; padding: 50px; background: #fff; border-radius: 8px; box-shadow: 0 2px 4px rgba(0,0,0,0.05);">
+            <h3 style="color: #666; margin-top: 0;">You haven't placed any orders yet.</h3>
+            <p style="color: #888;">Browse the student organizations and find some cool merch!</p>
+            <a href="{{ url_for('home.index') }}" style="display: inline-block; background: #003366; color: white; padding: 10px 20px; text-decoration: none; border-radius: 6px; font-weight: 600; margin-top: 10px;">Explore Organizations</a>
+        </div>
+    {% endif %}
+</div>
+{% endblock %}

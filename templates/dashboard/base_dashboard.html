@@ -1,0 +1,44 @@
+{% extends "base.html" %}
+
+{% block content %}
+<style>
+    .dash-container { display: flex; gap: 30px; margin-top: 20px; }
+    .dash-sidebar { width: 250px; flex-shrink: 0; background: #fff; border-radius: 8px; box-shadow: 0 2px 4px rgba(0,0,0,0.05); padding: 20px 0; height: fit-content; }
+    .dash-sidebar h3 { padding: 0 20px; color: #003366; margin-top: 0; margin-bottom: 15px; font-size: 18px; }
+    .dash-sidebar a { display: block; padding: 12px 20px; color: #555; text-decoration: none; font-weight: 600; border-left: 4px solid transparent; transition: all 0.2s; }
+    .dash-sidebar a:hover { background: #f4f7f6; color: #003366; }
+    .dash-sidebar a.active { background: #eef2f5; color: #003366; border-left-color: #003366; }
+    
+    .dash-main { flex: 1; min-width: 0; }
+    .dash-header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 25px; }
+    .dash-header h1 { margin: 0; color: #003366; font-size: 28px; }
+</style>
+
+<div class="dash-container">
+    <!-- Sidebar -->
+    <div class="dash-sidebar">
+        <h3>{{ org.name }}</h3>
+        <a href="{{ url_for('dashboard.merch') }}" class="{% if 'merch' in request.endpoint %}active{% endif %}">Merch Store</a>
+        
+        <!-- NEW ORDERS LINK WITH BADGE -->
+        <a href="{{ url_for('dashboard.orders') }}" class="{% if request.endpoint == 'dashboard.orders' %}active{% endif %}">
+            Orders 
+            {% if pending_orders_count > 0 %}
+                <span style="background: #dc3545; color: white; padding: 2px 8px; border-radius: 10px; font-size: 12px; margin-left: 10px;">{{ pending_orders_count }}</span>
+            {% endif %}
+        </a>
+        
+        <a href="{{ url_for('dashboard.index') }}" class="{% if request.endpoint == 'dashboard.index' %}active{% endif %}">Overview</a>
+        <a href="{{ url_for('dashboard.announcements') }}" class="{% if request.endpoint == 'dashboard.announcements' %}active{% endif %}">Announcements</a>
+        <a href="{{ url_for('dashboard.merch') }}" class="{% if 'merch' in request.endpoint %}active{% endif %}">Merch Store</a>
+        <a href="{{ url_for('dashboard.settings') }}" class="{% if request.endpoint == 'dashboard.settings' %}active{% endif %}">Settings</a>
+        <hr style="border: 0; border-top: 1px solid #eee; margin: 15px 0;">
+        <a href="{{ url_for('home.public_org_page', slug=org.slug) }}" target="_blank" style="color: #28a745;">View Public Page &rarr;</a>
+    </div>
+
+    <!-- Main Content Area -->
+    <div class="dash-main">
+        {% block dashboard_content %}{% endblock %}
+    </div>
+</div>
+{% endblock %}

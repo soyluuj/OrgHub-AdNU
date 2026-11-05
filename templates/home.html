@@ -1,304 +1,174 @@
 {% extends "base.html" %}
-{% block title %}Home | OrgHub{% endblock %}
+{% block title %}Home{% endblock %}
 
-{% block content %}
+{% block css %}
 <style>
-    /* Section Styling */
-    .section { margin-bottom: 40px; padding: 25px; background: #fff; border-radius: 8px; box-shadow: 0 2px 4px rgba(0,0,0,0.05); }
-    .section h2 { color: #003366; margin-bottom: 25px; font-size: 24px; font-weight: 700;}
-
-    /* --- NEWS FEED GRID STYLING --- */
-    .news-grid {
-        display: grid;
-        grid-template-columns: repeat(2, 1fr); /* 2 Columns */
-        gap: 20px 40px; /* 20px vertical gap, 40px horizontal gap */
+    .section-title { font-size: 24px; font-weight: 800; color: var(--primary-blue); margin-bottom: 20px; border-bottom: 2px solid #eee; padding-bottom: 10px; margin-top: 40px;}
+    
+    /* --- NEWS FEED --- */
+    /* Auto-fill creates columns based on available space. Min 400px wide per card */
+    .news-grid { 
+        display: grid; 
+        grid-template-columns: repeat(auto-fill, minmax(400px, 1fr)); 
+        gap: 20px; 
+        margin-bottom: 50px; 
     }
-
-    .news-card {
-        display: flex;
-        justify-content: space-between;
-        align-items: flex-start;
-        border-bottom: 1px solid #e5e5e5;
-        padding-bottom: 25px;
-        gap: 20px;
-        cursor: pointer;
-        text-decoration: none;
-        color: inherit;
-    }
-
-    .news-content {
-        flex: 1;
-        display: flex;
-        flex-direction: column;
-    }
-
-    .news-header-container {
-        display: flex;
-        align-items: center; 
-        gap: 15px;           
-        margin-bottom: 12px;
-        width: 100%;
-    }
-
-    .news-org {
-        color: #daa520;
-        font-weight: 700;
-        font-size: 11px;
-        text-transform: uppercase;
-        letter-spacing: 0.5px;
-        white-space: nowrap; 
-    }
-
-    .news-line {
-        flex-grow: 1;           
-        height: 1px;            
-        background-color: #daa520; 
-    }
-
-    .news-title {
-        color: #1a1a1a;
-        font-size: 20px;
-        font-weight: 800;
-        margin: 0 0 15px 0;
-        line-height: 1.3;
-        display: -webkit-box;
-        -webkit-line-clamp: 2;
-        -webkit-box-orient: vertical;
-        overflow: hidden;
-        text-overflow: ellipsis;
-    }
-
-    .news-date {
-        color: #666;
-        font-size: 12px;
-        font-weight: 600;
-        text-transform: uppercase;
-        margin-top: auto; 
-    }
-
-    .news-image {
-        width: 160px;
-        height: 160px;
-        object-fit: cover;
-        flex-shrink: 0;
-    }
-
-    /* --- ORGANIZATIONS DIRECTORY STYLING --- */
-    .tab-container { 
+    
+    .news-card { 
         display: flex; 
-        justify-content: center;
-        gap: 15px; 
-        margin-bottom: 25px; 
-        border-bottom: 2px solid #eee; 
-        padding-bottom: 15px; 
-        flex-wrap: wrap; 
-        width: 100%;
-    }
-    .tab-btn { 
-        padding: 10px 20px; 
-        border: 1px solid #ddd; 
-        background: #f0f0f0; 
+        justify-content: space-between; 
+        gap: 20px; 
         cursor: pointer; 
-        font-size: 15px; 
-        font-weight: 600; 
-        border-radius: 6px; 
-        color: #555; 
-        transition: all 0.2s; 
-        width: auto !important; 
-        flex: 0 0 auto; 
+        background: white; 
+        padding: 20px; 
+        border-radius: 8px; 
+        box-shadow: var(--card-shadow); 
+        border: 1px solid transparent; 
+        transition: transform 0.2s, border-color 0.2s; 
     }
-    .tab-btn:hover { background: #e0e0e0; }
-    .tab-btn.active { background: #003366; color: white; border-color: #003366; }
+    .news-card:hover { transform: translateY(-3px); border-color: var(--primary-blue); }
+    
+    .news-content { flex: 1; min-width: 0; display: flex; flex-direction: column; }
+    
+    .news-org { color: var(--accent-red); font-weight: 700; font-size: 11px; text-transform: uppercase; margin-bottom: 8px; display: block; }
+    .news-title { font-size: 18px; font-weight: 800; line-height: 1.3; margin-bottom: 10px; display: -webkit-box; -webkit-line-clamp: 2; -webkit-box-orient: vertical; overflow: hidden; word-break: break-word; }
+    .news-desc { color: var(--text-light); font-size: 14px; line-height: 1.5; margin-bottom: 15px; display: -webkit-box; -webkit-line-clamp: 2; -webkit-box-orient: vertical; overflow: hidden; word-break: break-word; }
+    .news-date { color: #999; font-size: 11px; font-weight: 600; text-transform: uppercase; margin-top: auto; }
+    .news-image { width: 120px; height: 120px; object-fit: cover; border-radius: 6px; flex-shrink: 0; }
 
-    /* The 3-column grid for orgs */
+    /* --- DIRECTORY --- */
+    .tab-container { display: flex; justify-content: flex-start; gap: 10px; margin-bottom: 30px; flex-wrap: wrap; }
+    .tab-btn { background: white; border: 1px solid var(--border-color); color: var(--text-light); padding: 10px 20px; border-radius: 30px; font-weight: 600; width: auto; }
+    .tab-btn:hover { background: #f0f0f0; }
+    .tab-btn.active { background: var(--primary-blue); color: white; border-color: var(--primary-blue); }
+
+    /* Auto-fill for orgs, min 200px wide */
     .org-grid { 
         display: grid; 
-        grid-template-columns: repeat(3, 1fr); 
+        grid-template-columns: repeat(auto-fill, minmax(200px, 1fr)); 
         gap: 20px; 
     }
-
+    
     .org-card { 
-        border: 1px solid #ddd; 
-        padding: 15px; 
-        border-radius: 6px; 
-        background: #fafafa; 
+        background: white; 
+        border: 1px solid var(--border-color); 
+        padding: 20px; 
+        border-radius: 8px; 
+        text-align: center; 
         transition: transform 0.2s, box-shadow 0.2s; 
-        display: block; 
-        text-decoration: none; 
-        color: inherit; 
+        display: flex;
+        flex-direction: column;
+        justify-content: center;
+        min-height: 100px;
     }
-    .org-card:hover { transform: translateY(-3px); box-shadow: 0 6px 12px rgba(0,0,0,0.1); border-color: #003366; }
-    .org-card h4 { margin: 0; color: #003366; font-size: 16px; }
+    .org-card:hover { transform: translateY(-5px); box-shadow: var(--card-shadow); border-color: var(--primary-blue); }
+    .org-card h4 { color: var(--primary-blue); font-size: 16px; margin: 0 0 5px 0; word-break: break-word;}
+    .org-card span { font-size: 11px; color: var(--text-light); text-transform: uppercase; }
 
-    /* --- MODAL STYLING --- */
-    .modal-overlay {
-        display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%;
-        background: rgba(0,0,0,0.6); z-index: 1000; justify-content: center; align-items: center;
-    }
-    .modal-content {
-        background: white; padding: 40px; border-radius: 8px; width: 90%; max-width: 700px;
-        max-height: 90vh; overflow-y: auto; position: relative;
-    }
-    .close-modal {
-        position: absolute; top: 15px; right: 20px; font-size: 28px; font-weight: bold; color: #333; cursor: pointer;
-    }
-    .close-modal:hover { color: #c0392b; }
-
-    /* Responsive Adjustments */
-    @media (max-width: 900px) {
+    @media (max-width: 768px) {
         .news-grid { grid-template-columns: 1fr; }
-        .org-grid { grid-template-columns: repeat(2, 1fr); }
-    }
-    @media (max-width: 600px) {
-        .org-grid { grid-template-columns: 1fr; }
     }
 </style>
+{% endblock %}
 
-<!-- RECENT ANNOUNCEMENTS FEED -->
-<div class="section">
-    <h2>Campus Announcements</h2>
-    
+{% block content %}
+
+<!-- SEARCH BAR -->
+<form method="GET" action="{{ url_for('home.index') }}" style="background: white; padding: 20px; border-radius: 8px; box-shadow: var(--card-shadow); display: flex; gap: 10px; margin-bottom: 40px; flex-wrap: wrap; border: 1px solid var(--border-color);">
+    <input type="text" name="search" value="{{ search_query }}" placeholder="Search organizations or announcements..." style="flex: 2; min-width: 250px;">
+    <select name="category" style="flex: 1; min-width: 150px;">
+        <option value="">All Categories</option>
+        <option value="curricular" {% if category_filter == 'curricular' %}selected{% endif %}>Curricular</option>
+        <option value="extra-curricular" {% if category_filter == 'extra-curricular' %}selected{% endif %}>Extra-Curricular</option>
+        <option value="department" {% if category_filter == 'department' %}selected{% endif %}>Department</option>
+    </select>
+    <button type="submit" class="btn btn-primary" style="width: auto;">Search</button>
+    {% if search_query or category_filter %}
+        <a href="{{ url_for('home.index') }}" style="display: flex; align-items: center; color: var(--accent-red); font-weight: 600; padding: 0 10px;">Clear</a>
+    {% endif %}
+</form>
+
+<!-- ANNOUNCEMENTS FEED -->
+<h2 class="section-title">Campus Announcements</h2>
+<div class="news-grid">
     {% if recent_announcements %}
-        <div class="news-grid">
-            {% for post in recent_announcements %}
-                <div class="news-card" onclick="openModal('{{ post.organization.name }}', '{{ post.title | escape }}', '{{ post.created_at.strftime('%b %d, %Y %I:%M %p') }}', '{{ post.content | escape }}', '{{ url_for('static', filename=post.image_url) if post.image_url else '' }}')">
-                    
-                    <div class="news-content">
-                        <div class="news-header-container">
-                            <span class="news-org">{{ post.organization.name }}</span>
-                            <div class="news-line"></div>
-                        </div>
-                        
-                        <h3 class="news-title">{{ post.title }}</h3>
-                        <span class="news-date">{{ post.created_at.strftime('%b %d, %Y %I:%M %p') }}</span>
-                    </div>
-                    
-                    {% if post.image_url %}
-                        <img src="{{ url_for('static', filename=post.image_url) }}" class="news-image" alt="Announcement Image">
-                    {% endif %}
+        {% for post in recent_announcements %}
+            <div class="news-card" onclick="openModal('{{ post.organization.name }}', '{{ post.title | escape }}', '{{ post.created_at.strftime('%b %d, %Y') }}', '{{ post.content | escape }}', '{{ url_for('static', filename=post.image_url) if post.image_url else '' }}')">
+                <div class="news-content">
+                    <span class="news-org">{{ post.organization.name }}</span>
+                    <h3 class="news-title">{{ post.title }}</h3>
+                    <p class="news-desc">{{ post.content }}</p>
+                    <span class="news-date">{{ post.created_at.strftime('%b %d, %Y') }}</span>
                 </div>
-            {% endfor %}
-        </div>
+                {% if post.image_url %}
+                    <img src="{{ url_for('static', filename=post.image_url) }}" class="news-image">
+                {% endif %}
+            </div>
+        {% endfor %}
     {% else %}
-        <p style="color: #888;">No announcements have been posted yet.</p>
+        <p style="color: var(--text-light);">No announcements found.</p>
     {% endif %}
 </div>
 
-<!-- ORGANIZATIONS DIRECTORY -->
-<div class="section">
-    <h2>Student Organizations</h2>
-    
-    <div class="tab-container">
-        <button class="tab-btn active" onclick="filterCategory('all', this)">All Organizations</button>
-        <button class="tab-btn" onclick="filterCategory('curricular', this)">Curricular</button>
-        <button class="tab-btn" onclick="filterCategory('extra-curricular', this)">Extra-Curricular</button>
-        <button class="tab-btn" onclick="filterCategory('department', this)">Department</button>
-    </div>
-
-    <!-- We combine all orgs into one list for JS filtering, but keep them separate here so we don't have to change Python -->
-    <div class="org-grid" id="org-directory">
-        
-        <!-- Curricular Orgs -->
-        {% for org in categorized_orgs.curricular %}
-            <a href="{{ url_for('home.public_org_page', slug=org.slug) }}" class="org-card" data-category="curricular">
-                <h4>{{ org.name }}</h4>
-            </a>
-        {% endfor %}
-
-        <!-- Extra-Curricular Orgs -->
-        {% for org in categorized_orgs['extra-curricular'] %}
-            <a href="{{ url_for('home.public_org_page', slug=org.slug) }}" class="org-card" data-category="extra-curricular">
-                <h4>{{ org.name }}</h4>
-            </a>
-        {% endfor %}
-
-        <!-- Department Orgs -->
-        {% for org in categorized_orgs.department %}
-            <a href="{{ url_for('home.public_org_page', slug=org.slug) }}" class="org-card" data-category="department">
-                <h4>{{ org.name }}</h4>
-            </a>
-        {% endfor %}
-        
-    </div>
-    
-    <div id="no-orgs-msg" style="color: #888; display: none; margin-top: 20px;">No orgs found for this category.</div>
+<!-- ORG DIRECTORY -->
+<h2 class="section-title">Student Organizations</h2>
+<div class="tab-container">
+    <button class="tab-btn active" onclick="filterCategory('all', this)">All Orgs</button>
+    <button class="tab-btn" onclick="filterCategory('curricular', this)">Curricular</button>
+    <button class="tab-btn" onclick="filterCategory('extra-curricular', this)">Extra-Curricular</button>
+    <button class="tab-btn" onclick="filterCategory('department', this)">Department</button>
 </div>
 
-<!-- MODAL (Hidden by default) -->
-<div id="announcementModal" class="modal-overlay">
-    <div class="modal-content">
-        <span class="close-modal" onclick="closeModal()">&times;</span>
-        
-        <span id="modalOrg" style="color: #c0392b; font-weight: 700; font-size: 13px; text-transform: uppercase;"></span>
-        <h1 id="modalTitle" style="color: #1a1a1a; margin-top: 10px; margin-bottom: 10px; font-weight: 800;"></h1>
+<div class="org-grid" id="org-directory">
+    {% for category, orgs in categorized_orgs.items() %}
+        {% for org in orgs %}
+            <a href="{{ url_for('home.public_org_page', slug=org.slug) }}" class="org-card" data-category="{{ category }}">
+                <h4>{{ org.name }}</h4>
+                <span>{{ category.replace('-', ' ') }}</span>
+            </a>
+        {% endfor %}
+    {% endfor %}
+</div>
+
+<!-- MODAL -->
+<div id="announcementModal" style="display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.6); z-index: 1000; justify-content: center; align-items: center;">
+    <div style="background: white; padding: 40px; border-radius: 8px; width: 90%; max-width: 700px; max-height: 90vh; overflow-y: auto; position: relative;">
+        <span onclick="closeModal()" style="position: absolute; top: 15px; right: 20px; font-size: 28px; font-weight: bold; cursor: pointer;">&times;</span>
+        <span id="modalOrg" style="color: var(--accent-red); font-weight: 700; font-size: 12px; text-transform: uppercase;"></span>
+        <h1 id="modalTitle" style="margin: 10px 0; font-weight: 800; word-break: break-word;"></h1>
         <p id="modalDate" style="color: #888; font-size: 14px; margin-bottom: 20px;"></p>
-        
-        <img id="modalImage" src="" style="width: 100%; max-height: 400px; object-fit: cover; border-radius: 8px; display: none; margin-bottom: 20px;">
-        
-        <div id="modalBody" style="font-size: 16px; line-height: 1.6; white-space: pre-wrap; color: #333;"></div>
+        <img id="modalImage" src="" style="width: 100%; max-height: 350px; object-fit: contain; border-radius: 8px; display: none; margin-bottom: 20px; background: #f9f9f9;">
+        <div id="modalBody" style="line-height: 1.6; white-space: pre-wrap; word-break: break-word;"></div>
     </div>
 </div>
 
-<!-- Scripts -->
+{% endblock %}
+
+{% block scripts %}
 <script>
-    // --- NEW ORG FILTER LOGIC ---
-    function filterCategory(category, btnElement) {
-        // Update button styling
-        const buttons = document.getElementsByClassName('tab-btn');
-        for (let i = 0; i < buttons.length; i++) {
-            buttons[i].classList.remove('active');
-        }
-        btnElement.classList.add('active');
-
-        // Filter the cards
-        const cards = document.querySelectorAll('.org-card');
-        let visibleCount = 0;
-
-        cards.forEach(card => {
-            if (category === 'all' || card.getAttribute('data-category') === category) {
-                card.style.display = 'block';
-                visibleCount++;
-            } else {
-                card.style.display = 'none';
-            }
+    function filterCategory(category, btn) {
+        document.querySelectorAll('.tab-btn').forEach(b => b.classList.remove('active'));
+        btn.classList.add('active');
+        
+        document.querySelectorAll('.org-card').forEach(card => {
+            card.style.display = (category === 'all' || card.getAttribute('data-category') === category) ? 'flex' : 'none';
         });
-
-        // Show/hide empty message
-        const emptyMsg = document.getElementById('no-orgs-msg');
-        if (visibleCount === 0) {
-            emptyMsg.style.display = 'block';
-        } else {
-            emptyMsg.style.display = 'none';
-        }
     }
 
-    // --- MODAL LOGIC ---
     function openModal(org, title, date, content, imageUrl) {
         document.getElementById('modalOrg').innerText = org;
         document.getElementById('modalTitle').innerText = title;
         document.getElementById('modalDate').innerText = date;
         document.getElementById('modalBody').innerText = content;
         
-        const imgElement = document.getElementById('modalImage');
-        if (imageUrl) {
-            imgElement.src = imageUrl;
-            imgElement.style.display = 'block';
-        } else {
-            imgElement.style.display = 'none';
-        }
+        const img = document.getElementById('modalImage');
+        if (imageUrl) { img.src = imageUrl; img.style.display = 'block'; } 
+        else { img.style.display = 'none'; }
         
         document.getElementById('announcementModal').style.display = 'flex';
     }
 
-    function closeModal() {
-        document.getElementById('announcementModal').style.display = 'none';
-    }
-
-    window.onclick = function(event) {
-        const modal = document.getElementById('announcementModal');
-        if (event.target == modal) {
-            closeModal();
-        }
-    }
+    function closeModal() { document.getElementById('announcementModal').style.display = 'none'; }
+    window.onclick = e => { if (e.target.id === 'announcementModal') closeModal(); }
 </script>
 {% endblock %}

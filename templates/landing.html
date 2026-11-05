@@ -1,0 +1,144 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>OrgHub | All Orgs, One Hub</title>
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;600;800&display=swap" rel="stylesheet">
+    <style>
+        * { box-sizing: border-box; margin: 0; padding: 0; }
+        body, html { height: 100%; font-family: 'Poppins', sans-serif; }
+        
+        /* The Hero Background */
+        .hero {
+            height: 100vh;
+            background: linear-gradient(135deg, #003366 0%, #00509e 100%);
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            text-align: center;
+            padding: 20px;
+            color: white;
+            position: relative;
+            overflow: hidden;
+        }
+
+        /* Decorative background circles */
+        .hero::before, .hero::after {
+            content: '';
+            position: absolute;
+            border-radius: 50%;
+            background: rgba(255, 255, 255, 0.05);
+        }
+        .hero::before { width: 400px; height: 400px; top: -100px; left: -100px; }
+        .hero::after { width: 600px; height: 600px; bottom: -200px; right: -200px; }
+
+        /* The Content Container */
+        .hero-content {
+            max-width: 800px;
+            z-index: 2;
+        }
+
+        .logo-text {
+            font-size: 24px;
+            font-weight: 800;
+            color: #e67e22; /* Orange accent */
+            text-transform: uppercase;
+            letter-spacing: 2px;
+            margin-bottom: 10px;
+        }
+
+        h1 {
+            font-size: 64px;
+            font-weight: 800;
+            line-height: 1.1;
+            margin-bottom: 20px;
+            letter-spacing: -1px;
+        }
+
+        p.description {
+            font-size: 20px;
+            font-weight: 300;
+            line-height: 1.6;
+            margin-bottom: 40px;
+            color: #d1e0f0;
+        }
+
+        /* Call to Action Buttons */
+        .cta-group {
+            display: flex;
+            gap: 15px;
+            justify-content: center;
+            align-items: center;
+        }
+
+        .btn-primary {
+            background: #28a745;
+            color: white;
+            padding: 15px 35px;
+            border-radius: 30px;
+            text-decoration: none;
+            font-size: 18px;
+            font-weight: 600;
+            transition: transform 0.2s, background 0.2s;
+            box-shadow: 0 4px 15px rgba(40, 167, 69, 0.4);
+        }
+
+        .btn-primary:hover {
+            background: #218838;
+            transform: translateY(-3px);
+        }
+
+        .btn-secondary {
+            background: transparent;
+            color: white;
+            padding: 15px 35px;
+            border-radius: 30px;
+            text-decoration: none;
+            font-size: 18px;
+            font-weight: 600;
+            border: 2px solid rgba(255, 255, 255, 0.5);
+            transition: all 0.2s;
+        }
+
+        .btn-secondary:hover {
+            background: rgba(255, 255, 255, 0.1);
+            border-color: white;
+        }
+
+        /* Responsive */
+        @media (max-width: 768px) {
+            h1 { font-size: 42px; }
+            p.description { font-size: 16px; }
+            .cta-group { flex-direction: column; width: 100%; }
+            .btn-primary, .btn-secondary { width: 100%; }
+        }
+    </style>
+</head>
+<body>
+
+    <div class="hero">
+        <div class="hero-content">
+            <div class="logo-text">OrgHub AdNU</div>
+            
+            <h1>All Orgs, One Hub.</h1>
+            
+            <p class="description">
+                Discover everything your university's student organizations have to offer. 
+                From the latest announcements to exclusive merch drops, stay informed 
+                on the communities that matter to you.
+            </p>
+
+            <div class="cta-group">
+                <!-- Button to Register -->
+                <a href="{{ url_for('auth.register') }}" class="btn-primary">Create an Account</a>
+                
+                <!-- Button to Login (if they already have one) -->
+                <a href="{{ url_for('auth.login') }}" class="btn-secondary">Log In</a>
+            </div>
+        </div>
+    </div>
+
+</body>
+</html>

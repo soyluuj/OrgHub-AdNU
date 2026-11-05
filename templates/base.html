@@ -2,47 +2,171 @@
 <html lang="en">
 <head>
     <meta charset="UTF-8">
-    <title>OrgHub | {% block title %}{% endblock %}</title>
-    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;600&display=swap" rel="stylesheet">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>{% block title %}OrgHub AdNU{% endblock %} | AdNU</title>
+    
+    <!-- Fonts -->
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
+    
     <style>
-        body { font-family: 'Poppins', sans-serif; margin: 0; padding: 0; background-color: #f4f7f6; }
-        header { background: #003366; color: white; padding: 15px 30px; display: flex; justify-content: space-between; align-items: center; }
-        header a { color: white; text-decoration: none; margin-left: 15px; font-weight: 600; }
-        .container { max-width: 1200px; margin: 40px auto; padding: 20px; background: white; border-radius: 8px; box-shadow: 0 4px 6px rgba(0,0,0,0.1); }
-        .flash { padding: 10px; background: #d4edda; color: #155724; margin-bottom: 20px; border-radius: 4px; }
-        input, select { width: 100%; padding: 10px; margin: 10px 0; border: 1px solid #ccc; border-radius: 4px; box-sizing: border-box; }
-        button { background: #003366; color: white; padding: 10px 20px; border: none; border-radius: 4px; cursor: pointer; width: 100%; }
+        /* --- GLOBAL VARIABLES --- */
+        :root {
+            --primary-blue: #003366;
+            --primary-hover: #002244;
+            --accent-orange: #e67e22;
+            --accent-red: #c0392b;
+            --success-green: #28a745;
+            --bg-light: #f4f7f6;
+            --text-dark: #333;
+            --text-light: #666;
+            --border-color: #e0e0e0;
+            --card-shadow: 0 4px 6px rgba(0,0,0,0.05);
+        }
+
+        /* --- BASE RESET --- */
+        * { box-sizing: border-box; margin: 0; padding: 0; }
+        body { font-family: 'Poppins', sans-serif; background-color: var(--bg-light); color: var(--text-dark); display: flex; flex-direction: column; min-height: 100vh; }
+        a { color: var(--primary-blue); text-decoration: none; transition: color 0.2s; }
+        a:hover { color: var(--primary-hover); }
+        
+        /* Standardize inputs for the whole app */
+        input[type="text"], input[type="email"], input[type="password"], input[type="number"], input[type="url"], select, textarea {
+            width: 100%; padding: 12px 15px; border: 1px solid var(--border-color); border-radius: 6px; font-family: 'Poppins', sans-serif; font-size: 14px; transition: border-color 0.2s;
+        }
+        input:focus, select:focus, textarea:focus { outline: none; border-color: var(--primary-blue); }
+        
+        /* Standardize buttons */
+        button, .btn { 
+            font-family: 'Poppins', sans-serif; font-weight: 600; padding: 12px 20px; border: none; border-radius: 6px; cursor: pointer; transition: all 0.2s; font-size: 14px;
+        }
+        .btn-primary { background: var(--primary-blue); color: white; }
+        .btn-primary:hover { background: var(--primary-hover); transform: translateY(-1px); }
+        .btn-danger { background: #dc3545; color: white; }
+        .btn-danger:hover { background: #c82333; }
+
+        /* --- NAVBAR --- */
+        .navbar {
+            background: var(--primary-blue);
+            padding: 15px 40px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            position: sticky;
+            top: 0;
+            z-index: 100;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+        }
+        .nav-brand { font-size: 24px; font-weight: 800; color: white; text-decoration: none; letter-spacing: -0.5px; }
+        .nav-brand span { color: var(--accent-orange); }
+        
+        .nav-links { display: flex; align-items: center; gap: 20px; }
+        .nav-links a { color: white; font-weight: 500; font-size: 15px; }
+        .nav-links a:hover { color: #e0e0e0; }
+        .nav-btn { background: var(--success-green); padding: 8px 16px; border-radius: 6px; font-weight: 600 !important; }
+        .nav-btn:hover { background: #218838; color: white !important; }
+
+        /* --- DROPDOWN MENU --- */
+        .profile-dropdown { position: relative; padding-bottom: 15px; margin-bottom: -15px; /* Creates an invisible hover bridge */ }
+        .dropdown-toggle { display: flex; align-items: center; gap: 8px; cursor: pointer; color: white; font-weight: 500; }
+        
+        .dropdown-menu {
+            display: none; position: absolute; right: 0; top: 100%; 
+            /* removed margin-top so it touches the bridge */
+            background: white; border-radius: 8px; box-shadow: 0 10px 25px rgba(0,0,0,0.15);
+            min-width: 200px; z-index: 101; overflow: hidden;
+        }
+        
+        .profile-dropdown:hover .dropdown-menu { display: block; }
+        .dropdown-header { padding: 15px; border-bottom: 1px solid var(--border-color); background: #fafafa; }
+        .dropdown-header h4 { margin: 0; color: var(--primary-blue); font-size: 15px; }
+        .dropdown-header p { margin: 0; color: var(--text-light); font-size: 12px; }
+        .dropdown-menu a { display: block; padding: 12px 15px; color: var(--text-dark); font-size: 14px; font-weight: 500; }
+        .dropdown-menu a:hover { background: var(--bg-light); color: var(--primary-blue); }
+
+        /* --- MAIN CONTENT --- */
+        .main-content { flex: 1; width: 100%; max-width: 1200px; margin: 0 auto; padding: 40px 20px; }
+
+        /* --- FLASH MESSAGES --- */
+        .flash-container { max-width: 1200px; margin: 20px auto 0; padding: 0 20px; }
+        .flash-message { padding: 15px; background: #d4edda; color: #155724; border-radius: 6px; margin-bottom: 10px; font-weight: 500; border-left: 4px solid #28a745; }
+
+        /* --- FOOTER --- */
+        .footer { background: #fff; padding: 30px; text-align: center; color: var(--text-light); font-size: 14px; border-top: 1px solid var(--border-color); margin-top: auto; }
+
+        /* Responsive */
+        @media (max-width: 768px) {
+            .navbar { padding: 15px 20px; flex-direction: column; gap: 15px; }
+            .nav-links { width: 100%; justify-content: center; flex-wrap: wrap; }
+        }
     </style>
+
+    {% block css %}{% endblock %}
 </head>
 <body>
-    <header>
-        <h2><a href="{{ url_for('home.index') }}">OrgHub</a></h2>
-        <nav>
+
+    <!-- NAVBAR -->
+    <nav class="navbar">
+        <a href="{{ url_for('home.index') }}" class="nav-brand">OrgHub<span>AdNU</span></a>
+        
+        <div class="nav-links">
             {% if session.get("user_id") %}
-                <!-- THE SMART BUTTON -->
+                
+                <!-- Org Admin Links -->
                 {% if session.get("role") == "org_admin" %}
-                    <a href="{{ url_for('dashboard.index') }}" style="background: #28a745; padding: 8px 15px; border-radius: 4px; font-weight: bold;">My Org Dashboard</a>
+                    <a href="{{ url_for('dashboard.index') }}" class="nav-btn">Dashboard</a>
+                
+                <!-- Student Links -->
+                {% else %}
+                    <a href="{{ url_for('orders.my_orders') }}">My Orders</a>
                 {% endif %}
                 
-                <span>Hi, {{ session["user_name"] }}</span>
-                <a href="{{ url_for('auth.logout') }}">Logout</a>
+                <!-- Profile Dropdown -->
+                <div class="profile-dropdown">
+                    <div class="dropdown-toggle">
+                        Hi, {{ session["user_name"].split()[0] }} 
+                        <svg xmlns="http://www.w3.org/2000/svg" width="12" height="12" fill="currentColor" viewBox="0 0 16 16"><path d="M7.247 11.14 2.451 5.658C1.885 5.013 2.345 4 3.204 4h9.592a1 1 0 0 1 .753 1.659l-4.796 5.48a1 1 0 0 1-1.506 0z"/></svg>
+                    </div>
+                    <div class="dropdown-menu">
+                        <div class="dropdown-header">
+                            <h4>{{ session["user_name"] }}</h4>
+                            <p>{{ session["user_email"] }}</p>
+                        </div>
+                        {% if session.get("role") != "org_admin" %}
+                            <a href="{{ url_for('profile.index') }}">My Profile</a>
+                        {% else %}
+                        {% endif %}
+                        <a href="{{ url_for('auth.logout') }}" style="color: #dc3545; border-top: 1px solid #eee;">Logout</a>
+                    </div>
+                </div>
+
             {% else %}
                 <a href="{{ url_for('auth.login') }}">Login</a>
-                <a href="{{ url_for('auth.register') }}">Register</a>
+                <a href="{{ url_for('auth.register') }}" class="nav-btn">Sign Up</a>
             {% endif %}
-        </nav>
-    </header>
+        </div>
+    </nav>
 
-    <div class="container">
-        {% with messages = get_flashed_messages() %}
-            {% if messages %}
+    <!-- FLASH MESSAGES -->
+    {% with messages = get_flashed_messages() %}
+        {% if messages %}
+            <div class="flash-container">
                 {% for message in messages %}
-                    <div class="flash">{{ message }}</div>
+                    <div class="flash-message">{{ message }}</div>
                 {% endfor %}
-            {% endif %}
-        {% endwith %}
+            </div>
+        {% endif %}
+    {% endwith %}
 
+    <!-- MAIN CONTENT -->
+    <main class="main-content">
         {% block content %}{% endblock %}
-    </div>
+    </main>
+
+    <!-- FOOTER -->
+    <footer class="footer">
+        &copy; 2026 OrgHub AdNU. All rights reserved.
+    </footer>
+
+    {% block scripts %}{% endblock %}
 </body>
 </html>

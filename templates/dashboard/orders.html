@@ -1,0 +1,114 @@
+{% extends "dashboard/base_dashboard.html" %}
+{% block dashboard_content %}
+<div class="dash-header" style="margin-bottom: 20px;">
+    <h1>Manage Orders</h1>
+</div>
+
+<!-- TABS FOR ACTIVE VS COMPLETED -->
+<div style="display: flex; gap: 10px; margin-bottom: 25px; border-bottom: 2px solid #eee; padding-bottom: 15px;">
+    <button class="tab-btn active" onclick="switchTab('active', this)" style="width: auto; padding: 10px 20px; border: 1px solid #ddd; border-radius: 6px; background: #003366; color: white; cursor: pointer; font-weight: 600;">Active Orders ({{ active_orders|length }})</button>
+    
+    <button class="tab-btn" onclick="switchTab('history', this)" style="width: auto; padding: 10px 20px; border: 1px solid #ddd; border-radius: 6px; background: #f0f0f0; color: #555; cursor: pointer; font-weight: 600;">Order History ({{ completed_orders|length }})</button>
+</div>
+
+<!-- ACTIVE ORDERS TAB -->
+<div id="tab-active" style="display: block;">
+    {% if active_orders %}
+        <div style="display: flex; flex-direction: column; gap: 20px;">
+            {% for order in active_orders %}
+                <!-- Include the order card HTML here -->
+                <div style="background: #fff; border: 1px solid #eee; padding: 20px; border-radius: 8px; box-shadow: 0 2px 4px rgba(0,0,0,0.05); border-left: 4px solid {% if order.status == 'Pending' %}#ffc107{% else %}#28a745{% endif %};">
+                    <div style="display: flex; justify-content: space-between; margin-bottom: 15px;">
+                        <div>
+                            <h3 style="margin: 0; color: #003366;">Order #{{ order.id }}</h3>
+                            <small>Customer: <strong>{{ order.student.full_name }}</strong> ({{ order.student.email }})</small>
+                        </div>
+                        <div>
+                            <span style="font-weight: bold; color: {% if order.status == 'Pending' %}#856404{% else %}#155724{% endif %};">
+                                {{ order.status }}
+                            </span>
+                        </div>
+                    </div>
+
+                    <div style="margin-bottom: 20px;">
+                        {% for item in order.items %}
+                            <div style="display: flex; justify-content: space-between; padding: 5px 0; border-bottom: 1px dashed #eee;">
+                                <span>{{ item.quantity }}x {{ item.product.name }}</span>
+                                <span>₱{{ "%.2f"|format(item.price_at_time) }}</span>
+                            </div>
+                        {% endfor %}
+                    </div>
+
+                    <form method="POST" action="{{ url_for('dashboard.update_order', order_id=order.id) }}" style="background: #f9f9f9; padding: 15px; border-radius: 6px;">
+                        <div style="display: flex; gap: 15px; align-items: flex-end;">
+                            <div style="flex: 1;">
+                                <label style="display: block; font-weight: bold; font-size: 13px; margin-bottom: 5px;">Update Status</label>
+                                <select name="status" style="width: 100%; padding: 8px; border: 1px solid #ccc; border-radius: 4px;">
+                                    <option value="Pending" {% if order.status == 'Pending' %}selected{% endif %}>Pending</option>
+                                    <option value="Ready for Pickup" {% if order.status == 'Ready for Pickup' %}selected{% endif %}>Ready for Pickup</option>
+                                    <option value="Completed" {% if order.status == 'Completed' %}selected{% endif %}>Completed</option>
+                                </select>
+                            </div>
+                            <div style="flex: 2;">
+                                <label style="display: block; font-weight: bold; font-size: 13px; margin-bottom: 5px;">Pickup Instructions (Optional)</label>
+                                <input type="text" name="instructions" value="{{ order.pickup_instructions or '' }}" placeholder="e.g. Pick up at CS Office, look for John" style="width: 100%; padding: 8px; border: 1px solid #ccc; border-radius: 4px;">
+                            </div>
+                            <button type="submit" style="background: #003366; color: white; padding: 9px 20px; border: none; border-radius: 4px; cursor: pointer; font-weight: bold; width: auto;">Update</button>
+                        </div>
+                    </form>
+                </div>
+            {% endfor %}
+        </div>
+    {% else %}
+        <div style="text-align: center; padding: 40px; background: #fff; border-radius: 8px;">
+            <p style="color: #888;">No active orders right now. You're all caught up! 🎉</p>
+        </div>
+    {% endif %}
+</div>
+
+<!-- COMPLETED ORDERS TAB -->
+<div id="tab-history" style="display: none;">
+    {% if completed_orders %}
+        <div style="display: flex; flex-direction: column; gap: 15px;">
+            {% for order in completed_orders %}
+                <div style="background: #fafafa; border: 1px solid #eee; padding: 15px; border-radius: 8px; opacity: 0.8;">
+                    <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 10px;">
+                        <h4 style="margin: 0; color: #333;">Order #{{ order.id }}</h4>
+                        <span style="color: #28a745; font-weight: bold; font-size: 12px;">COMPLETED</span>
+                    </div>
+                    <p style="margin: 0; font-size: 13px; color: #666;">
+                        Customer: {{ order.student.full_name }} | Date: {{ order.created_at.strftime('%b %d, %Y') }}
+                    </p>
+                </div>
+            {% endfor %}
+        </div>
+    {% else %}
+        <div style="text-align: center; padding: 40px; background: #fff; border-radius: 8px;">
+            <p style="color: #888;">No completed orders yet.</p>
+        </div>
+    {% endif %}
+</div>
+
+<!-- Tab Switching Logic -->
+<script>
+    function switchTab(tabName, btnElement) {
+        // Hide all tabs
+        document.getElementById('tab-active').style.display = 'none';
+        document.getElementById('tab-history').style.display = 'none';
+
+        // Reset button styles
+        const buttons = document.getElementsByClassName('tab-btn');
+        for (let i = 0; i < buttons.length; i++) {
+            buttons[i].style.background = '#f0f0f0';
+            buttons[i].style.color = '#555';
+        }
+
+        // Show selected tab
+        document.getElementById('tab-' + tabName).style.display = 'block';
+        
+        // Highlight button
+        btnElement.style.background = '#003366';
+        btnElement.style.color = 'white';
+    }
+</script>
+{% endblock %}
