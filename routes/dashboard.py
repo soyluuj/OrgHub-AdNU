@@ -1,3 +1,4 @@
+import json
 from flask import Blueprint, render_template, request, redirect, url_for, flash, session
 from utils.decorators import org_admin_required
 from services.org_service import OrgService
@@ -48,7 +49,14 @@ def settings():
         flash("Profile updated successfully!")
         return redirect(url_for('dashboard.settings'))
 
-    return render_template("dashboard/settings.html", org=org)
+    org_links = []
+    if org.links:
+        try:
+            org_links = json.loads(org.links)
+        except:
+            pass
+
+    return render_template("dashboard/settings.html", org=org, org_links=org_links)
 
 @dashboard_bp.route("/announcements/create", methods=["POST"])
 @org_admin_required
@@ -58,7 +66,11 @@ def create_announcement():
     content = request.form.get("content")
     
     if title and content:
-        OrgService.create_announcement(user.organization.id, title, content)
+        OrgService.create_announcement(
+            user.organization.id, 
+            request.form, 
+            request.files.get("image") # <--- Pass the uploaded image
+        )
         flash("Announcement posted!")
     else:
         flash("Title and content are required.")

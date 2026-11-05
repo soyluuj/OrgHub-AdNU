@@ -2,42 +2,79 @@
 {% block title %}Settings | {{ org.name }}{% endblock %}
 
 {% block content %}
-<div style="max-width: 600px; margin: 0 auto;">
-    <h2>Edit Organization Profile</h2>
-    <p><a href="{{ url_for('dashboard.index') }}">&larr; Back to Dashboard</a></p>
+<div style="max-width: 700px; margin: 0 auto; background: #fff; padding: 30px; border-radius: 8px; box-shadow: 0 4px 6px rgba(0,0,0,0.05);">
+    <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 20px;">
+        <h2 style="margin: 0; color: #003366;">Edit Organization Profile</h2>
+        <a href="{{ url_for('dashboard.index') }}" style="color: #666; text-decoration: none; font-weight: 600;">&larr; Back to Dashboard</a>
+    </div>
 
     <form method="POST" enctype="multipart/form-data">
-        <div class="form-group">
-            <label>Organization Name</label>
-            <input type="text" name="name" value="{{ org.name }}" required>
+        <!-- Basic Info -->
+        <div style="margin-bottom: 20px;">
+            <label style="font-weight: 600; display: block; margin-bottom: 5px;">Organization Name</label>
+            <input type="text" name="name" value="{{ org.name }}" required style="width: 100%; padding: 10px; border: 1px solid #ccc; border-radius: 4px;">
         </div>
 
-        <div class="form-group">
-            <label>Bio / Description</label>
-            <textarea name="bio" rows="5" placeholder="Tell students about your org...">{{ org.bio or '' }}</textarea>
+        <div style="margin-bottom: 20px;">
+            <label style="font-weight: 600; display: block; margin-bottom: 5px;">Bio / Description</label>
+            <textarea name="bio" rows="4" placeholder="Tell students about your org..." style="width: 100%; padding: 10px; border: 1px solid #ccc; border-radius: 4px;">{{ org.bio or '' }}</textarea>
         </div>
 
-        <div class="form-group">
-            <label>Logo (Square image recommended)</label>
+        <!-- Links Section -->
+        <div style="margin-top: 30px; margin-bottom: 30px; background: #f9f9f9; padding: 20px; border-radius: 8px; border: 1px solid #eee;">
+            <h3 style="margin-top: 0; font-size: 16px; color: #003366;">Organization Links</h3>
+            <p style="font-size: 13px; color: #666; margin-bottom: 15px;">Add links to your social media, website, or contact forms.</p>
+            
+            <div id="links-container">
+                {% for link in org_links %}
+                <div class="link-row" style="display: flex; gap: 10px; margin-bottom: 10px; align-items: center;">
+                    <input type="text" name="link_label" value="{{ link.label }}" placeholder="Label (e.g. Facebook)" style="flex: 1; padding: 10px; border: 1px solid #ccc; border-radius: 4px; width: auto !important;">
+                    <input type="url" name="link_url" value="{{ link.url }}" placeholder="https://..." style="flex: 2; padding: 10px; border: 1px solid #ccc; border-radius: 4px; width: auto !important;">
+                    <button type="button" onclick="this.parentElement.remove()" style="background: #dc3545; color: white; border: none; padding: 10px 15px; border-radius: 4px; cursor: pointer; font-weight: bold; width: auto !important;">X</button>
+                </div>
+                {% endfor %}
+            </div>
+            
+            <button type="button" onclick="addLinkRow()" style="background: #28a745; color: white; border: none; padding: 10px 15px; border-radius: 4px; cursor: pointer; font-weight: bold; width: auto !important; margin-top: 10px;">+ Add Link</button>
+        </div>
+
+        <!-- Images Section -->
+        <div style="margin-bottom: 20px;">
+            <label style="font-weight: 600; display: block; margin-bottom: 5px;">Logo (Square image recommended)</label>
             {% if org.logo_url %}
                 <div style="margin-bottom: 10px;">
-                    <img src="{{ url_for('static', filename=org.logo_url) }}" style="width: 100px; height: 100px; object-fit: cover; border-radius: 8px;">
+                    <img src="{{ url_for('static', filename=org.logo_url) }}" style="width: 100px; height: 100px; object-fit: cover; border-radius: 8px; border: 1px solid #ddd;">
                 </div>
             {% endif %}
-            <input type="file" name="logo" accept="image/*">
+            <input type="file" name="logo" accept="image/*" style="width: 100%; padding: 10px; background: #f9f9f9; border: 1px solid #ccc; border-radius: 4px;">
         </div>
 
-        <div class="form-group">
-            <label>Cover Image (Wide image recommended)</label>
+        <div style="margin-bottom: 20px;">
+            <label style="font-weight: 600; display: block; margin-bottom: 5px;">Cover Image (Wide image recommended)</label>
             {% if org.cover_image_url %}
                 <div style="margin-bottom: 10px;">
-                    <img src="{{ url_for('static', filename=org.cover_image_url) }}" style="width: 100%; height: 150px; object-fit: cover; border-radius: 8px;">
+                    <img src="{{ url_for('static', filename=org.cover_image_url) }}" style="width: 100%; height: 150px; object-fit: cover; border-radius: 8px; border: 1px solid #ddd;">
                 </div>
             {% endif %}
-            <input type="file" name="cover" accept="image/*">
+            <input type="file" name="cover" accept="image/*" style="width: 100%; padding: 10px; background: #f9f9f9; border: 1px solid #ccc; border-radius: 4px;">
         </div>
 
-        <button type="submit">Save Changes</button>
+        <button type="submit" style="width: 100%; padding: 15px; background: #003366; color: white; border: none; border-radius: 6px; font-size: 16px; font-weight: 600; cursor: pointer; margin-top: 10px;">Save Changes</button>
     </form>
 </div>
+
+<script>
+    function addLinkRow() {
+        const container = document.getElementById('links-container');
+        const newRow = document.createElement('div');
+        newRow.className = 'link-row';
+        newRow.style = 'display: flex; gap: 10px; margin-bottom: 10px; align-items: center;';
+        newRow.innerHTML = `
+            <input type="text" name="link_label" placeholder="Label (e.g. Facebook)" style="flex: 1; padding: 10px; border: 1px solid #ccc; border-radius: 4px; width: auto !important;">
+            <input type="url" name="link_url" placeholder="https://..." style="flex: 2; padding: 10px; border: 1px solid #ccc; border-radius: 4px; width: auto !important;">
+            <button type="button" onclick="this.parentElement.remove()" style="background: #dc3545; color: white; border: none; padding: 10px 15px; border-radius: 4px; cursor: pointer; font-weight: bold; width: auto !important;">X</button>
+        `;
+        container.appendChild(newRow);
+    }
+</script>
 {% endblock %}

@@ -34,9 +34,16 @@
     <!-- Left Column: Post Announcement -->
     <div class="card">
         <h3>Post an Announcement</h3>
-        <form method="POST" action="{{ url_for('dashboard.create_announcement') }}">
+        <form method="POST" action="{{ url_for('dashboard.create_announcement') }}" enctype="multipart/form-data">
             <input type="text" name="title" placeholder="Announcement Title" required>
             <textarea name="content" rows="5" placeholder="What's the news?" required></textarea>
+            
+            <!-- ADD THIS INPUT -->
+            <div style="margin-top: 10px; margin-bottom: 10px;">
+                <label style="font-size: 14px; color: #555;">Attach an Image (Optional)</label>
+                <input type="file" name="image" accept="image/*" style="display: block; margin-top: 5px;">
+            </div>
+
             <button type="submit" style="margin-top: 10px;">Post Announcement</button>
         </form>
     </div>

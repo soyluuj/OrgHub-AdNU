@@ -1,3 +1,4 @@
+import json
 from extensions import db
 from models import Organization, Announcement, Product
 import re
@@ -21,6 +22,15 @@ class OrgService:
         org.name = form.get("name")
         org.bio = form.get("bio")
         
+        labels = form.getlist("link_label")
+        urls = form.getlist("link_url")
+        
+        links_data = []
+        for i in range(len(labels)):
+            if labels[i].strip() and urls[i].strip():
+                links_data.append({"label": labels[i].strip(), "url": urls[i].strip()})
+        
+        org.links = json.dumps(links_data) if links_data else None
         # Update images if new ones were uploaded
         if logo_file:
             new_logo = UploadService.save_image(logo_file)
@@ -34,8 +44,18 @@ class OrgService:
         return org
 
     @staticmethod
-    def create_announcement(org_id, title, content):
-        announcement = Announcement(org_id=org_id, title=title, content=content)
+    def create_announcement(org_id, form, image_file):
+        from services.upload_service import UploadService
+        
+        # Save the image if one was uploaded
+        image_url = UploadService.save_image(image_file)
+        
+        announcement = Announcement(
+            org_id=org_id, 
+            title=form.get("title"), 
+            content=form.get("content"),
+            image_url=image_url
+        )
         db.session.add(announcement)
         db.session.commit()
         return announcement
