@@ -3,13 +3,18 @@ from config import Config
 from extensions import db, bcrypt
 from routes import register_blueprints
 
-app = Flask(__name__)
-app.config.from_object(Config)
+def create_app():
+    app = Flask(__name__)
+    app.config.from_object(Config)
 
-db.init_app(app)
-bcrypt.init_app(app)
+    db.init_app(app)
+    bcrypt.init_app(app)
 
-register_blueprints(app)
+    register_blueprints(app)
+
+    return app
+
+app = create_app()
 
 if __name__ == "__main__":
     with app.app_context():
