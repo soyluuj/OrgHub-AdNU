@@ -139,7 +139,7 @@
 <div class="org-grid" id="org-directory">
     {% for category, orgs in categorized_orgs.items() %}
         {% for org in orgs %}
-            <a href="{{ url_for('home.public.org_page', slug=org.slug) }}" class="org-card" data-category="{{ category }}">
+            <a href="{{ url_for('home.public_org_page', slug=org.slug) }}" class="org-card" data-category="{{ category }}">
                 <h4>{{ org.name }}</h4>
                 <span>{{ category.replace('-', ' ') }}</span>
             </a>
