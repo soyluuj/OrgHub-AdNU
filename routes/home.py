@@ -99,7 +99,7 @@ def public_org_page(slug):
     
     # 4. Pass BOTH org_links and filtered_products to the template
     return render_template(
-        "public/org_page.html", 
+        "org_page.html", 
         org=org, 
         org_links=org_links, 
         products=filtered_products, 
