@@ -33,7 +33,7 @@
         <a href="{{ url_for('dashboard.merch') }}" class="{% if 'merch' in request.endpoint %}active{% endif %}">Merch Store</a>
         <a href="{{ url_for('dashboard.settings') }}" class="{% if request.endpoint == 'dashboard.settings' %}active{% endif %}">Settings</a>
         <hr style="border: 0; border-top: 1px solid #eee; margin: 15px 0;">
-        <a href="{{ url_for('home.public_org_page', slug=org.slug) }}" target="_blank" style="color: #28a745;">View Public Page &rarr;</a>
+        <a href="{{ url_for('home.public.org_page', slug=org.slug) }}" target="_blank" style="color: #28a745;">View Public Page &rarr;</a>
     </div>
 
     <!-- Main Content Area -->
