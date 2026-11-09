@@ -88,10 +88,14 @@ def public_org_page(slug):
     else:
         filtered_products = org.products
 
-    # 3. Track view
-    new_view = PageView(org_id=org.id)
-    db.session.add(new_view)
-    db.session.commit()
+    # 3. Track view SAFELY (This is the fix!)
+    try:
+        new_view = PageView(org_id=org.id)
+        db.session.add(new_view)
+        db.session.commit()
+    except Exception as e:
+        db.session.rollback() # If it fails, rollback so the page doesn't crash
+        print(f"Failed to save PageView: {e}")
     
     # 4. Pass BOTH org_links and filtered_products to the template
     return render_template(
