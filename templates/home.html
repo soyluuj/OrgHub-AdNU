@@ -3,10 +3,9 @@
 
 {% block css %}
 <style>
-    .section-title { font-size: 24px; font-weight: 800; color: var(--primary-blue); margin-bottom: 20px; border-bottom: 2px solid #eee; padding-bottom: 10px; margin-top: 40px;}
+    .section-title { font-size: 24px; font-weight: 800; color: var(--primary-blue); margin-bottom: 20px; border-bottom: 2px solid #eee; padding-bottom: 10px; margin-top: 40px; text-align: center; }
     
     /* --- NEWS FEED --- */
-    /* Auto-fill creates columns based on available space. Min 400px wide per card */
     .news-grid { 
         display: grid; 
         grid-template-columns: repeat(auto-fill, minmax(400px, 1fr)); 
@@ -31,8 +30,19 @@
     .news-content { flex: 1; min-width: 0; display: flex; flex-direction: column; }
     
     .news-org { color: var(--accent-red); font-weight: 700; font-size: 11px; text-transform: uppercase; margin-bottom: 8px; display: block; }
-    .news-title { font-size: 18px; font-weight: 800; line-height: 1.3; margin-bottom: 10px; display: -webkit-box; -webkit-line-clamp: 2; -webkit-box-orient: vertical; overflow: hidden; word-break: break-word; }
-    .news-desc { color: var(--text-light); font-size: 14px; line-height: 1.5; margin-bottom: 15px; display: -webkit-box; -webkit-line-clamp: 2; -webkit-box-orient: vertical; overflow: hidden; word-break: break-word; }
+    
+    .news-title { 
+        font-size: 18px; font-weight: 800; line-height: 1.3; margin-bottom: 10px; 
+        display: -webkit-box; -webkit-line-clamp: 2; line-clamp: 2; -webkit-box-orient: vertical; overflow: hidden; 
+        word-break: break-word; 
+    }
+    
+    .news-desc { 
+        color: var(--text-light); font-size: 14px; line-height: 1.5; margin-bottom: 15px; 
+        display: -webkit-box; -webkit-line-clamp: 2; line-clamp: 2; -webkit-box-orient: vertical; overflow: hidden; 
+        word-break: break-word; 
+    }
+    
     .news-date { color: #999; font-size: 11px; font-weight: 600; text-transform: uppercase; margin-top: auto; }
     .news-image { width: 120px; height: 120px; object-fit: cover; border-radius: 6px; flex-shrink: 0; }
 
@@ -42,7 +52,6 @@
     .tab-btn:hover { background: #f0f0f0; }
     .tab-btn.active { background: var(--primary-blue); color: white; border-color: var(--primary-blue); }
 
-    /* Auto-fill for orgs, min 200px wide */
     .org-grid { 
         display: grid; 
         grid-template-columns: repeat(auto-fill, minmax(200px, 1fr)); 
@@ -93,7 +102,15 @@
 <div class="news-grid">
     {% if recent_announcements %}
         {% for post in recent_announcements %}
-            <div class="news-card" onclick="openModal('{{ post.organization.name }}', '{{ post.title | escape }}', '{{ post.created_at.strftime('%b %d, %Y') }}', '{{ post.content | escape }}', '{{ url_for('static', filename=post.image_url) if post.image_url else '' }}')">
+            <!-- USING DATA ATTRIBUTES TO PREVENT JS SYNTAX ERRORS -->
+            <div class="news-card" 
+                 data-org="{{ post.organization.name }}"
+                 data-title="{{ post.title }}"
+                 data-date="{{ post.created_at.strftime('%b %d, %Y') }}"
+                 data-content="{{ post.content }}"
+                 data-image="{{ url_for('static', filename=post.image_url) if post.image_url else '' }}"
+                 onclick="handleNewsClick(this)">
+                 
                 <div class="news-content">
                     <span class="news-org">{{ post.organization.name }}</span>
                     <h3 class="news-title">{{ post.title }}</h3>
@@ -146,6 +163,7 @@
 
 {% block scripts %}
 <script>
+    // --- ORG DIRECTORY FILTER ---
     function filterCategory(category, btn) {
         document.querySelectorAll('.tab-btn').forEach(b => b.classList.remove('active'));
         btn.classList.add('active');
@@ -155,20 +173,30 @@
         });
     }
 
-    function openModal(org, title, date, content, imageUrl) {
-        document.getElementById('modalOrg').innerText = org;
-        document.getElementById('modalTitle').innerText = title;
-        document.getElementById('modalDate').innerText = date;
-        document.getElementById('modalBody').innerText = content;
+    // --- NEWS MODAL LOGIC ---
+    function handleNewsClick(element) {
+        document.getElementById('modalOrg').innerText = element.dataset.org;
+        document.getElementById('modalTitle').innerText = element.dataset.title;
+        document.getElementById('modalDate').innerText = element.dataset.date;
+        document.getElementById('modalBody').innerText = element.dataset.content;
         
         const img = document.getElementById('modalImage');
-        if (imageUrl) { img.src = imageUrl; img.style.display = 'block'; } 
-        else { img.style.display = 'none'; }
+        if (element.dataset.image) { 
+            img.src = element.dataset.image; 
+            img.style.display = 'block'; 
+        } else { 
+            img.style.display = 'none'; 
+        }
         
         document.getElementById('announcementModal').style.display = 'flex';
     }
 
-    function closeModal() { document.getElementById('announcementModal').style.display = 'none'; }
-    window.onclick = e => { if (e.target.id === 'announcementModal') closeModal(); }
+    function closeModal() { 
+        document.getElementById('announcementModal').style.display = 'none'; 
+    }
+    
+    window.onclick = e => { 
+        if (e.target.id === 'announcementModal') closeModal(); 
+    }
 </script>
 {% endblock %}

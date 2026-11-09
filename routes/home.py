@@ -1,3 +1,4 @@
+import json
 from flask import Blueprint, render_template, request, session, redirect, url_for
 from models import Organization, Announcement, PageView
 from extensions import db
