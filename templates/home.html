@@ -108,8 +108,7 @@
                  data-title="{{ post.title }}"
                  data-date="{{ post.created_at.strftime('%b %d, %Y') }}"
                  data-content="{{ post.content }}"
-                 data-image="{{ url_for('static', filename=post.image_url) if post.image_url else '' }}"
-                 onclick="handleNewsClick(this)">
+                 data-image="{{ post.image_url if post.image_url and post.image_url.startswith('http') else (url_for('static', filename=post.image_url) if post.image_url else '') }}"                 onclick="handleNewsClick(this)">
                  
                 <div class="news-content">
                     <span class="news-org">{{ post.organization.name }}</span>
@@ -118,7 +117,7 @@
                     <span class="news-date">{{ post.created_at.strftime('%b %d, %Y') }}</span>
                 </div>
                 {% if post.image_url %}
-                    <img src="{{ url_for('static', filename=post.image_url) }}" class="news-image">
+                    <img src="{{ post.image_url if post.image_url.startswith('http') else url_for('static', filename=post.image_url) }}" class="news-image">
                 {% endif %}
             </div>
         {% endfor %}

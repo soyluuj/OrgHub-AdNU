@@ -15,7 +15,7 @@
         {% for product in products %}
             <div style="border: 1px solid #ddd; border-radius: 8px; overflow: hidden; background: #fff;">
                 {% if product.image_url %}
-                    <img src="{{ url_for('static', filename=product.image_url) }}" style="width: 100%; height: 200px; object-fit: cover;">
+                    <img src="{{ product.image_url if product.image_url.startswith('http') else url_for('static', filename=product.image_url) }}" style="width: 100%; height: 200px; object-fit: cover;">
                 {% else %}
                     <div style="width: 100%; height: 200px; background: #eee; display: flex; align-items: center; justify-content: center;">No Image</div>
                 {% endif %}

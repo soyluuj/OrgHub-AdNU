@@ -85,14 +85,14 @@
 <!-- Profile Header -->
 <div class="profile-header">
     {% if org.cover_image_url %}
-        <img src="{{ url_for('static', filename=org.cover_image_url) }}" class="cover-photo">
+        <img src="{{ org.cover_image_url if org.cover_image_url.startswith('http') else url_for('static', filename=org.cover_image_url) }}" class="cover-photo">
     {% else %}
         <div class="cover-photo"></div>
     {% endif %}
     
     <div class="profile-info">
         {% if org.logo_url %}
-            <img src="{{ url_for('static', filename=org.logo_url) }}" class="profile-logo">
+            <img src="{{ org.logo_url if org.logo_url.startswith('http') else url_for('static', filename=org.logo_url) }}" class="profile-logo">
         {% else %}
             <div class="profile-logo" style="display: flex; align-items: center; justify-content: center; color: #ccc;">No Logo</div>
         {% endif %}
@@ -158,16 +158,14 @@
                              data-price="₱{{ '%.2f'|format(product.price) }}"
                              data-desc="{{ product.description or '' }}"
                              data-stock="{{ product.stock }}"
-                             data-image="{{ url_for('static', filename=product.image_url) if product.image_url else '' }}"
-                             onclick="handleMerchClick(this)">
+                            data-image="{{ product.image_url if product.image_url and product.image_url.startswith('http') else (url_for('static', filename=product.image_url) if product.image_url else '') }}"                             onclick="handleMerchClick(this)">
                             
                             {% if product.stock == 0 %}
                                 <div class="sold-out-overlay"><span>Sold Out</span></div>
                             {% endif %}
 
-                            {% if product.image_url %}
-                                <!-- Using Jinja to conditionally add the grayscale class -->
-                                <img src="{{ url_for('static', filename=product.image_url) }}" class="merch-img {% if product.stock == 0 %}merch-img-sold-out{% endif %}">
+                           {% if product.image_url %}
+                                <img src="{{ product.image_url if product.image_url.startswith('http') else url_for('static', filename=product.image_url) }}" class="merch-img {% if product.stock == 0 %}merch-img-sold-out{% endif %}">
                             {% else %}
                                 <div class="merch-img" style="display: flex; align-items: center; justify-content: center;">No Image</div>
                             {% endif %}
@@ -193,8 +191,7 @@
                              data-title="{{ post.title }}"
                              data-date="{{ post.created_at.strftime('%B %d, %Y') }}"
                              data-content="{{ post.content }}"
-                             data-image="{{ url_for('static', filename=post.image_url) if post.image_url else '' }}"
-                             onclick="handleAnnouncementClick(this)">
+                             data-image="{{ post.image_url if post.image_url and post.image_url.startswith('http') else (url_for('static', filename=post.image_url) if post.image_url else '') }}"                             onclick="handleAnnouncementClick(this)">
                             <div class="news-text">
                                 <!-- RESTORED THE ORG NAME AND ORANGE LINE HERE -->
                                 <div class="news-header-container">
@@ -207,7 +204,7 @@
                             </div>
                             
                             {% if post.image_url %}
-                                <img src="{{ url_for('static', filename=post.image_url) }}" class="news-image">
+                                <img src="{{ post.image_url if post.image_url.startswith('http') else url_for('static', filename=post.image_url) }}" class="news-image">
                             {% endif %}
                         </div>
                     {% endfor %}
