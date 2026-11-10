@@ -1,8 +1,13 @@
+import cloudinary
+import cloudinary.uploader
 import os
-import uuid
-from werkzeug.utils import secure_filename
 
-UPLOAD_FOLDER = os.path.join("static", "uploads")
+cloudinary.config(
+    cloud_name=os.getenv("CLOUDINARY_CLOUD_NAME"),
+    api_key=os.getenv("CLOUDINARY_API_KEY"),
+    api_secret=os.getenv("CLOUDINARY_API_SECRET"),
+    secure=True
+)
 
 class UploadService:
     @staticmethod
@@ -10,15 +15,12 @@ class UploadService:
         if not file or file.filename == "":
             return None
             
-        # Ensure folder exists
-        os.makedirs(UPLOAD_FOLDER, exist_ok=True)
-        
-        # Secure the filename and add a unique ID so files don't overwrite
-        filename = secure_filename(file.filename)
-        unique_filename = f"{uuid.uuid4().hex}_{filename}"
-        
-        filepath = os.path.join(UPLOAD_FOLDER, unique_filename)
-        file.save(filepath)
-        
-        # Return the relative path for the database
-        return f"uploads/{unique_filename}"
+        try:
+            # Upload directly to Cloudinary
+            upload_result = cloudinary.uploader.upload(file)
+            
+            # Return the permanent HTTPS URL
+            return upload_result.get("secure_url")
+        except Exception as e:
+            print(f"Cloudinary Upload Error: {e}")
+            return None
