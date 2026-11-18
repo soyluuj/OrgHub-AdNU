@@ -6,10 +6,8 @@ from sqlalchemy import desc, or_
 
 home_bp = Blueprint("home", __name__)
 
-# NEW: Landing Page Route
 @home_bp.route("/landing")
 def landing():
-    # If they are already logged in, send them straight to the hub
     if session.get("user_id"):
         return redirect(url_for("home.index"))
     return render_template("landing.html")
@@ -22,11 +20,9 @@ def index():
     search_query = request.args.get("search", "").strip()
     category_filter = request.args.get("category", "").strip()
 
-    # Base Queries
     orgs_query = Organization.query
     announcements_query = Announcement.query
 
-    # Apply Search Filter
     if search_query:
         # Search Orgs by Name
         orgs_query = orgs_query.filter(Organization.name.ilike(f"%{search_query}%"))
@@ -72,7 +68,6 @@ def index():
 def public_org_page(slug):
     org = Organization.query.filter_by(slug=slug).first_or_404()
     
-    # 1. Parse the links JSON safely
     org_links = []
     if org.links:
         try:
@@ -80,7 +75,6 @@ def public_org_page(slug):
         except:
             pass
 
-    # 2. Handle merch search
     merch_search = request.args.get("merch_search", "").strip()
     
     if merch_search:
@@ -88,16 +82,14 @@ def public_org_page(slug):
     else:
         filtered_products = org.products
 
-    # 3. Track view SAFELY (This is the fix!)
     try:
         new_view = PageView(org_id=org.id)
         db.session.add(new_view)
         db.session.commit()
     except Exception as e:
-        db.session.rollback() # If it fails, rollback so the page doesn't crash
+        db.session.rollback()
         print(f"Failed to save PageView: {e}")
     
-    # 4. Pass BOTH org_links and filtered_products to the template
     return render_template(
         "org_page.html", 
         org=org, 

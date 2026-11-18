@@ -52,8 +52,6 @@ def setup_org():
 
     return render_template("dashboard/setup.html")
 
-# --- NEW ROUTES BELOW ---
-
 @dashboard_bp.route("/settings", methods=["GET", "POST"])
 @org_admin_required
 def settings():

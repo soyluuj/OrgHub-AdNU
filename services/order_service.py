@@ -15,7 +15,7 @@ class OrderService:
             status="Pending"
         )
         db.session.add(new_order)
-        db.session.flush() # Flush to get the order.id before committing
+        db.session.flush()
 
         # 2. Create the Order Item
         order_item = OrderItem(
